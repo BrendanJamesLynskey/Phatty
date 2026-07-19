@@ -8,7 +8,7 @@
 
 ## Features
 
-- **ACID-303** — monophonic acid voice: switchable saw/square oscillator with a sub octave, a resonant low-pass filter driven by an exponential filter envelope, **accent** (boosts brightness + level + snap) and true legato **slides** (pitch glides between steps), plus a per-voice overdrive for that squelchy growl. Per-step note, accent and slide editing on a lane of up to 64 steps (4 bars).
+- **ACID-303 / lead voice** — monophonic voice: switchable saw/square oscillator with a sub octave, a resonant low-pass filter with an envelope (turn Env Mod up for the classic 303 squelch, or down for a clean, steady synth lead), **accent**, true legato **slides**, a per-voice overdrive, and a per-preset **gate** that sets how long each note holds (staccato → legato). Per-step note, accent, slide and **note-length (ties)** editing on a lane of up to 64 steps (4 bars).
 - **Drum machine** — 8 hand-tuned synthesized voices: kick (pitch-drop + click), snare, 4-burst clap, metallic closed/open hats (with hi-hat choke), two toms and a cowbell. Per-lane **mute/solo** and per-step accent.
 - **Poly synth** — 5-voice subtractive synth with dual detuned oscillators, stereo spread, and independent filter + amp ADSR. A 16-step chord sequencer runs chord stabs, basslines and pads.
 - **Phat master bus** — warm low shelf → tape-style saturation → glue compressor → brickwall limiter, with a single **PHAT** macro that drives drive, sub weight and squeeze together.
