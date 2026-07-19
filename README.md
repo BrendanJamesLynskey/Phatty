@@ -16,7 +16,7 @@
 - **Poly synth** — 5-voice subtractive synth with dual detuned oscillators, stereo spread, and independent filter + amp ADSR. A 16-step chord sequencer runs chord stabs, basslines and pads.
 - **Phat master bus** — warm low shelf → tape-style saturation → glue compressor → brickwall limiter, with a single **PHAT** macro that drives drive, sub weight and squeeze together.
 - **Effects** — tempo-synced ping-pong delay send and a decaying-noise convolution reverb send, both fed from every instrument. The sends are **high-passed** so low bass and kick energy never recirculate into the delay feedback or the reverb tail — the repeats stay clean instead of building into a boomy wash.
-- **7 note-accurate reproductions** — each transcribes a classic's signature riff step-for-step into the mono acid lead (which has per-step pitch), voiced as a clean, low-resonance synth. Several span multiple bars (see below). Plus a **Randomize** button that generates fresh, scale-constrained patterns that always sound musical.
+- **14 famous public-domain melodies** — Ode to Joy, Für Elise, the Turkish March, William Tell, Can-Can, the Tetris theme and more, each transcribed note-for-note (pitch and rhythm) onto the LEAD voice with a bassline, chords and beat, mixed melody-forward so the tune is unmistakable (see below). Plus a **Randomize** button that generates fresh, scale-constrained patterns that always sound musical.
 - **Extended sequencer for longer tunes** — patterns up to **128 steps / 8 bars**, selectable at 8 / 12 / 16 / 32 / 48 / 64 / 96 / 128 steps, with bar separators, an auto-scrolling grid that follows the playhead on long patterns, plus swing, A/B pattern slots with chaining, and copy. Each preset uses its natural phrase length (the through-composed melodies run a full 8 bars; loop-based riffs stay 2–4).
 - **Rock-solid transport** — lookahead scheduler (the classic 25 ms / 100 ms "two clocks" pattern) for tight timing, a glowing playhead synced to the audio, and an analyser-driven VU meter.
 - **Custom knobs** — pointer-draggable (mouse and touch), double-tap to reset, mouse-wheel support, with a live value readout.
@@ -33,27 +33,28 @@ Or simply open `index.html` in any modern browser — the landing page detects y
 
 Best experienced with headphones. 🎧
 
-## Presets — note-accurate reproductions
+## Presets — famous public-domain melodies
 
-Every preset lays out the record's parts across the two mono voices and the chords: the **bassline** on ACID-303 and the **signature melody/hook** on LEAD (for bass-led tracks like *I Feel Love* the iconic bassline stays on ACID-303 and a topline sits on LEAD), with chord stabs/pads on POLY and a matching drum groove. Several use the extended sequencer to run over multiple bars so the parts develop like the real record.
+Each preset is a full, recognisable **public-domain melody** arranged as a synth groove: the tune on the **LEAD** voice (mixed up front so it's clearly the focus), a supporting **bassline** on ACID-303, the underlying **chords** on POLY, and a danceable **drum groove**. Because these are public-domain works (classical themes and traditional tunes), the complete melody is reproduced — the part you actually hum.
 
-| # | Preset | Reproduces | Length |
-|---|--------|-----------|--------|
-| 1 | Take On Me | a-ha — the Juno intro riff (1985) | 3 bars |
-| 2 | Popcorn | Hot Butter / Gershon Kingsley — the Moog melody (1972) | 2 bars |
-| 3 | Axel F | Harold Faltermeyer — the *Beverly Hills Cop* theme (1984) | 2 bars |
-| 4 | Sandstorm | Darude — the trance lead riff (1999) | 2 bars |
-| 5 | I Feel Love | Giorgio Moroder / Donna Summer — the pulsing octave bass (1977) | 2 bars |
-| 6 | Tetris (Korobeiniki) | traditional — the *Korobeiniki* A-theme (public domain) | 2 bars |
-| 7 | Hall of the Mountain King | Edvard Grieg — the creeping theme (public domain) | 4 bars |
-| 8 | Enola Gay | OMD — the piercing lead riff (1980) | 2 bars |
-| 9 | Just Can't Get Enough | Depeche Mode — the bright Jupiter-4 hook (1981) | 2 bars |
-| 10 | Cars | Gary Numan — the Polymoog riff (1979) | 2 bars |
-| 11 | Tainted Love | Soft Cell — the driving synth-bass hook (1981) | 2 bars |
-| 12 | Don't You Want Me | The Human League — the intro synth riff (1981) | 2 bars |
-| 13 | Don't Go | Yazoo — Vince Clarke's Pro-One bassline (1982) | 2 bars |
+| # | Preset | Composer / origin |
+|---|--------|-------------------|
+| 1 | Ode to Joy | Beethoven — Symphony No. 9 |
+| 2 | Für Elise | Beethoven |
+| 3 | Symphony No. 5 | Beethoven — the opening motif |
+| 4 | Eine kleine Nachtmusik | Mozart |
+| 5 | Rondo alla Turca (Turkish March) | Mozart |
+| 6 | Toccata and Fugue in D minor | J. S. Bach |
+| 7 | William Tell Overture | Rossini — the finale gallop |
+| 8 | Can-Can (Galop Infernal) | Offenbach |
+| 9 | Ride of the Valkyries | Wagner |
+| 10 | The Entertainer | Scott Joplin |
+| 11 | Dance of the Sugar Plum Fairy | Tchaikovsky — *The Nutcracker* |
+| 12 | Greensleeves | traditional English |
+| 13 | Korobeiniki (the Tetris theme) | traditional Russian |
+| 14 | In the Hall of the Mountain King | Grieg — *Peer Gynt* |
 
-A batch of early-'80s synth-pop classics rounds out the set. Only the melody line of each riff is reproduced — rendered in Phatty's own synth voice as a tribute. The two public-domain pieces (Tetris/*Korobeiniki* and Grieg) are reproduced in full over multiple bars.
+The melody, bassline, chords and beat are all synthesized live; each tune is transcribed note-for-note (pitch **and** rhythm) and voiced on Phatty's own synths.
 
 ## Files
 
