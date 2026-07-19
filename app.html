@@ -303,6 +303,8 @@ main{padding:14px 16px 60px;display:flex;flex-direction:column;gap:14px;max-widt
     <select id="presetSel" title="Preset"></select>
     <button class="btn sq" id="nextBtn" title="Next preset">&#9654;</button>
     <button class="btn" id="randBtn" title="Generate a random groove">&#127922; RANDOM</button>
+    <button class="btn" id="midiBtn" title="Load a Standard MIDI File (.mid): bass&rarr;303, GM drums&rarr;808, melody&rarr;lead">&#9834; MIDI</button>
+    <input type="file" id="midiInput" accept=".mid,.midi,audio/midi" style="display:none">
   </div>
   <div class="tsep"></div>
   <div class="tgroup">
@@ -534,6 +536,85 @@ function loadPreset(p){
   state.slot = 'A'; state.chain = false; state.len = p.len || 16;
 }
 const curPat = () => state.pats[state.slot];
+
+/* ============================================================
+   MIDI IMPORT — load a Standard MIDI File (.mid) into a pattern.
+   The standard interchange format: bass/low notes -> ACID-303,
+   melody/high notes -> LEAD, General-MIDI channel-10 drums -> the
+   808 lanes (fixed note map), tempo read from the file.
+   ============================================================ */
+function parseMIDI(buf){
+  const dv = new DataView(buf); let p = 0;
+  const u32=()=>{const v=dv.getUint32(p);p+=4;return v;};
+  const u16=()=>{const v=dv.getUint16(p);p+=2;return v;};
+  const u8=()=>dv.getUint8(p++);
+  const varlen=()=>{let v=0,c;do{c=u8();v=(v<<7)|(c&0x7f);}while(c&0x80);return v;};
+  if(u32()!==0x4d546864) throw new Error('not a MIDI file');
+  u32(); u16(); const ntrk=u16(); const div=u16();
+  const ppq = (div & 0x8000) ? 480 : div;               // ticks per quarter note
+  let tempo = 500000;                                   // microseconds/quarter (120 bpm)
+  const notes = [];
+  for(let t=0;t<ntrk && p<dv.byteLength;t++){
+    if(u32()!==0x4d54726b){ break; }
+    const trkLen=u32(); const end=p+trkLen; let tick=0, running=0; const on={};   // read length THEN add (p+u32() would use the pre-advance p)
+    while(p<end){
+      tick += varlen();
+      let status=u8();
+      if(status<0x80){ p--; status=running; } else running=status;
+      const type=status&0xf0, ch=status&0x0f;
+      if(type===0x90){ const n=u8(), v=u8();
+        if(v>0){ on[ch+'_'+n]={tick,v}; }
+        else { const k=ch+'_'+n,o=on[k]; if(o){ notes.push({ch,note:n,start:o.tick,end:tick,vel:o.v}); delete on[k]; } } }
+      else if(type===0x80){ const n=u8(); u8(); const k=ch+'_'+n,o=on[k]; if(o){ notes.push({ch,note:n,start:o.tick,end:tick,vel:o.v}); delete on[k]; } }
+      else if(type===0xA0||type===0xB0||type===0xE0){ u8(); u8(); }
+      else if(type===0xC0||type===0xD0){ u8(); }
+      else if(status===0xFF){ const meta=u8(), l=varlen(); if(meta===0x51&&l===3){ tempo=(dv.getUint8(p)<<16)|(dv.getUint8(p+1)<<8)|dv.getUint8(p+2); } p+=l; }
+      else if(status===0xF0||status===0xF7){ p+=varlen(); }
+      else { break; }
+    }
+    p = end;
+  }
+  return { ppq, tempo, notes };
+}
+const GM_DRUM = {35:'kick',36:'kick',37:'snare',38:'snare',40:'snare',39:'clap',75:'clap',
+  42:'chat',44:'chat',70:'chat',46:'ohat',54:'ohat',41:'ltom',43:'ltom',45:'ltom',
+  47:'htom',48:'htom',50:'htom',56:'cow',53:'cow',67:'cow',68:'cow'};
+function loadMIDI(buf, fname){
+  let parsed; try{ parsed = parseMIDI(buf); }catch(e){ alert('Could not read that MIDI file: '+e.message); return; }
+  const { ppq, tempo, notes } = parsed;
+  if(!notes.length){ alert('No notes found in that MIDI file.'); return; }
+  const bpm = clamp(Math.round(60000000/tempo), 60, 180);
+  const tps = Math.max(1, ppq/4);                       // ticks per 16th step
+  const q = t => Math.round(t/tps);
+  const maxStep = Math.max(0, ...notes.map(n=>q(n.start)));
+  const LENS=[16,32,48,64,96,128];
+  let len = LENS.find(l=>l> maxStep) || 128; if(maxStep>=128) len=128;   // first up to 8 bars
+  const pat = emptyPats();
+  // General-MIDI drums (channel 10 == index 9) -> 808 lanes
+  notes.filter(n=>n.ch===9).forEach(n=>{ const lane=GM_DRUM[n.note]; if(!lane) return;
+    const s=q(n.start); if(s>=0&&s<len) pat.drums[lane][s]= n.vel>=96?2:1; });
+  // melodic notes -> bass (low) + lead (melody); grouped per step for mono lanes
+  const byStep={}; notes.filter(n=>n.ch!==9).forEach(n=>{ const s=q(n.start); if(s>=0&&s<len)(byStep[s]=byStep[s]||[]).push(n); });
+  const bP=Array(len).fill(null),bL=Array(len).fill(1),lP=Array(len).fill(null),lL=Array(len).fill(1);
+  Object.keys(byStep).forEach(k=>{ const s=+k, ns=byStep[k].slice().sort((a,b)=>a.note-b.note);
+    const lo=ns[0], hi=ns[ns.length-1];
+    lP[s]=hi.note; lL[s]=Math.max(1,Math.min(len-s, q(hi.end)-s));          // melody -> lead
+    if(ns.length>=2 || lo.note<48){ bP[s]=lo.note; bL[s]=Math.max(1,Math.min(len-s, q(lo.end)-s)); } // bass note
+  });
+  const bv=bP.filter(x=>x!=null), lv=lP.filter(x=>x!=null);
+  const bassRoot = bv.length? clamp(Math.round(bv.reduce((a,b)=>a+b,0)/bv.length)-6, 24, 48) : 33;
+  const leadRoot = lv.length? Math.min(...lv) : 57;
+  const fill=(lane,P,L,root)=>{ for(let i=0;i<len;i++){ if(P[i]!=null){
+    lane[i]={on:true,tie:false,note:clamp(P[i]-root,-12,24),acc:false,sld:false};
+    for(let j=1;j<L[i]&&i+j<len;j++){ if(P[i+j]==null) lane[i+j]={on:false,tie:true,note:0,acc:false,sld:false}; } } } };
+  if(bv.length) fill(pat.acid,bP,bL,bassRoot);
+  if(lv.length) fill(pat.lead,lP,lL,leadRoot);
+  state.bpm=bpm; state.len=len; state.acid.root=bassRoot; state.lead.root=leadRoot;
+  state.pats.A=pat; state.pats.B=deep(pat); state.slot='A'; state.chain=false;
+  refreshAll();
+  const btn=$('midiBtn'); btn.textContent='♪ '+(fname||'MIDI').replace(/\.midi?$/i,'').slice(0,14);
+  setTimeout(()=>{ btn.innerHTML='&#9834; MIDI'; }, 4000);
+}
 
 /* ============================================================
    SECTION 2 — UI: knobs, grids, transport
@@ -877,6 +958,10 @@ function wireTransport(){
   $('prevBtn').addEventListener('click', ()=> applyPreset(presetIx-1));
   $('nextBtn').addEventListener('click', ()=> applyPreset(presetIx+1));
   $('randBtn').addEventListener('click', randomize);
+  $('midiBtn').addEventListener('click', ()=> $('midiInput').click());
+  $('midiInput').addEventListener('change', e=>{ const f=e.target.files[0]; if(!f) return;
+    const r=new FileReader(); r.onload=()=>{ try{ loadMIDI(r.result, f.name); }catch(err){ alert('MIDI load failed: '+err.message); } };
+    r.readAsArrayBuffer(f); e.target.value=''; });
 
   $('slotA').addEventListener('click', ()=>{ state.slot='A'; if(!state.chain) playSlot='A'; refreshAll(); });
   $('slotB').addEventListener('click', ()=>{ state.slot='B'; if(!state.chain) playSlot='B'; refreshAll(); });
