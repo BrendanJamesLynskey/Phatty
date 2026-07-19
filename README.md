@@ -12,8 +12,8 @@
 - **Drum machine** — 8 hand-tuned synthesized voices: kick (pitch-drop + click), snare, 4-burst clap, metallic closed/open hats (with hi-hat choke), two toms and a cowbell. Per-lane **mute/solo** and per-step accent.
 - **Poly synth** — 5-voice subtractive synth with dual detuned oscillators, stereo spread, and independent filter + amp ADSR. A 16-step chord sequencer runs chord stabs, basslines and pads.
 - **Phat master bus** — warm low shelf → tape-style saturation → glue compressor → brickwall limiter, with a single **PHAT** macro that drives drive, sub weight and squeeze together.
-- **Effects** — tempo-synced ping-pong delay send and a decaying-noise convolution reverb send, both fed from every instrument.
-- **18 groove presets based on classics** — each an affectionate, in-the-style-of homage to a defining electronic track (see below), plus a **Randomize** button that generates fresh, scale-constrained patterns that always sound musical.
+- **Effects** — tempo-synced ping-pong delay send and a decaying-noise convolution reverb send, both fed from every instrument. The sends are **high-passed** so low bass and kick energy never recirculate into the delay feedback or the reverb tail — the repeats stay clean instead of building into a boomy wash.
+- **20 groove presets based on famous tracks** — each an affectionate, in-the-style-of homage to one of the best-known electronic records ever made (see below), plus a **Randomize** button that generates fresh, scale-constrained patterns that always sound musical.
 - **Rock-solid transport** — lookahead scheduler (the classic 25 ms / 100 ms "two clocks" pattern) for tight timing, swing, adjustable pattern length (8/12/16), A/B pattern slots with chaining and copy, a glowing playhead synced to the audio, and an analyser-driven VU meter.
 - **Custom knobs** — pointer-draggable (mouse and touch), double-tap to reset, mouse-wheel support, with a live value readout.
 - **Desktop & mobile** — a responsive layout that auto-detects your device and reflows to a single scrollable column with larger touch targets on phones. Press **Space** to play/stop on desktop.
@@ -29,32 +29,34 @@ Or simply open `index.html` in any modern browser — the landing page detects y
 
 Best experienced with headphones. 🎧
 
-## Presets — homages to the classics
+## Presets — homages to famous tracks
 
-Each of the 18 presets recreates the *feel* of a landmark electronic track in Phatty's own voice — the signature bassline, drum groove or chord hook, programmed in-the-style-of rather than transcribed. Load one, hit play, and you're in the ballpark of the original in a couple of bars.
+Each of the 20 presets recreates the *feel* of one of the best-known electronic tracks ever made — its signature bassline, drum groove or melodic hook, programmed in Phatty's own voice rather than transcribed. Load one, hit play, and you're in the ballpark of the original in a couple of bars. They span downtempo trip-hop to big beat, trance and filter house (78–138 BPM).
 
 | # | Preset | Genre | Inspired by |
 |---|--------|-------|-------------|
-| 1 | Warehouse Squelch | Acid House | Phuture — *Acid Tracks* (1987) |
-| 2 | Higher Scream | Acid Techno | Josh Wink — *Higher State of Consciousness* (1995) |
-| 3 | Bounce Experience | Acid Trance | Hardfloor — *Acperience 1* (1992) |
-| 4 | Drum Delirium | Minimal | Plastikman — *Spastik* (1993) |
-| 5 | Night Flight | Detroit Techno | Model 500 — *No UFO's* (1985) |
-| 6 | Life in Strings | Detroit | Rhythim Is Rhythim — *Strings of Life* (1987) |
-| 7 | Crystal Circuit | Electro | Cybotron — *Clear* (1983) |
-| 8 | Planet Shock | Electro | Afrika Bambaataa — *Planet Rock* (1982) |
-| 9 | Deep Feeling | Deep House | Mr. Fingers — *Can You Feel It* (1986) |
-| 10 | Voodoo Spring | Acid House | A Guy Called Gerald — *Voodoo Ray* (1988) |
-| 11 | Pacific Dawn | Balearic House | 808 State — *Pacific State* (1989) |
-| 12 | Glass Tears | IDM | Aphex Twin — *Xtal* (1992) |
-| 13 | Tower Bells | Hard Techno | Jeff Mills — *The Bells* (1997) |
-| 14 | Echo Chamber | Dub Techno | Basic Channel / Maurizio |
-| 15 | Funk Prowler | Filter House | Daft Punk — *Da Funk* (1995) |
-| 16 | Werk It | Ghetto Tech | DJ Deeon — Chicago juke/ghetto |
-| 17 | Rezonate | Trance | Underworld — *Rez* (1993) |
-| 18 | Maximum Squelch | 303 Overdrive | full-squelch showcase |
+| 1 | Globe Trotter | Filter House | Daft Punk — *Around the World* (1997) |
+| 2 | Lucky Nights | Disco House | Daft Punk — *Get Lucky* (2013) |
+| 3 | Funk Growler | Filter House | Daft Punk — *Da Funk* (1995) |
+| 4 | Vienna Smoke | Downtempo | Kruder & Dorfmeister (*K&D Sessions*) |
+| 5 | Heartbeat Hymn | Trip-Hop | Massive Attack — *Teardrop* (1998) |
+| 6 | Velvet Noir | Trip-Hop | Portishead — *Glory Box* (1994) |
+| 7 | Sunshine Bag | Downtempo | Gorillaz — *Clint Eastwood* (2001) |
+| 8 | Block Rocker | Big Beat | The Chemical Brothers — *Block Rockin' Beats* (1997) |
+| 9 | Spark Punk | Big Beat | The Prodigy — *Firestarter* (1996) |
+| 10 | Right About Now | Big Beat | Fatboy Slim — *Right Here, Right Now* (1998) |
+| 11 | Slippy Lager | Techno Anthem | Underworld — *Born Slippy .NUXX* (1996) |
+| 12 | Sleepless City | Trance | Faithless — *Insomnia* (1995) |
+| 13 | Dreamland Keys | Dream Trance | Robert Miles — *Children* (1995) |
+| 14 | Dust Devil | Trance | Darude — *Sandstorm* (1999) |
+| 15 | Good Feeling | EDM House | Avicii — *Levels* (2011) |
+| 16 | Slow Strobe | Progressive House | deadmau5 — *Strobe* (2009) |
+| 17 | Cold Monday | Synth / EBM | New Order — *Blue Monday* (1983) |
+| 18 | Neon Pulse | Electronic Disco | Giorgio Moroder / Donna Summer — *I Feel Love* (1977) |
+| 19 | Automaton | Electro | Kraftwerk — *The Robots* (1978) |
+| 20 | Squelch State | Acid Techno | Josh Wink — *Higher State of Consciousness* (1995) |
 
-Tempos span 112–150 BPM across a range of keys. These are original patterns paying tribute to the tracks that defined each style — no audio or MIDI is copied from the originals.
+These are original patterns paying tribute to the tracks that defined each style — no audio or MIDI is copied from the originals.
 
 ## Files
 
