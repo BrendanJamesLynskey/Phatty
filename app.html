@@ -30,6 +30,7 @@
   --drum:#3ad6c4;
   --drum2:#22b8a6;
   --poly:#a78bfa;
+  --lead:#7cd0ff;
   --poly2:#8b6cf0;
   --red:#f4645f;
 }
@@ -145,6 +146,8 @@ main{padding:14px 16px 60px;display:flex;flex-direction:column;gap:14px;max-widt
 .panel.p-acid .ptitle{color:var(--acid)}
 .panel.p-drum .ptitle{color:var(--drum)}
 .panel.p-poly .ptitle{color:var(--poly)}
+.panel.p-lead .ptitle{color:var(--lead)}
+.leadKnobs .val{color:var(--lead)}
 .panel.p-fx .ptitle{color:var(--amber)}
 .ptitle .dot{background:currentColor;color:inherit}
 .psub{font-size:9px;color:var(--txt-dim);letter-spacing:.15em}
@@ -331,6 +334,17 @@ main{padding:14px 16px 60px;display:flex;flex-direction:column;gap:14px;max-widt
     <div class="gridwrap"><div class="pads" id="acidGrid" style="min-width:640px"></div></div>
   </section>
 
+  <section class="panel p-lead" id="leadPanel">
+    <div class="phead">
+      <div class="ptitle"><span class="dot"></span>LEAD</div>
+      <div class="psub">MONO SYNTH · TOPLINE</div>
+      <div class="pspacer"></div>
+      <button class="btn" id="leadWave">SAW</button>
+    </div>
+    <div class="knobrow" id="leadKnobs" style="margin-bottom:12px"></div>
+    <div class="gridwrap"><div class="pads" id="leadGrid" style="min-width:640px"></div></div>
+  </section>
+
   <section class="panel p-drum" id="drumPanel">
     <div class="phead">
       <div class="ptitle"><span class="dot"></span>DRUMS</div>
@@ -422,6 +436,8 @@ const state = {
   slot:'A', chain:false,
   acid:{ wave:'sawtooth', root:33, cutoff:600, res:14, env:2400, dec:0.2,
          acc:0.6, tune:0, sub:0.4, drive:0.3, level:0.75, dly:0.25, vrb:0.08, gate:0.85 },
+  lead:{ wave:'sawtooth', root:57, cutoff:2000, res:3, env:60, dec:0.2,
+         acc:0.5, tune:0, sub:0, drive:0.05, level:0.7, dly:0.15, vrb:0.15, gate:0.8 },
   drums:{ level:0.9, vrb:0.25, ktune:50, kdec:0.5, hdec:0.4,
           mut:{}, sol:{} },
   poly:{ w1:'sawtooth', w2:'square', det:10, cutoff:1400, envA:900, res:1,
@@ -447,7 +463,10 @@ function decB(str){                       // booleans: '1' = true
 function decN(str){                       // acid notes: space-separated; '.'=rest, '_'=hold/tie
   const tk=(str||'').trim().split(/\s+/); const out=[];
   for(let i=0;i<MAX_STEPS;i++){ const t=tk[i];
-    out.push(t===undefined||t==='.' ? null : (t==='_' ? '_' : parseInt(t,10))); }
+    if (t===undefined || t==='' || t==='.') out.push(null);       // rest
+    else if (t==='_') out.push('_');                              // tie/hold
+    else { const n=parseInt(t,10); out.push(Number.isFinite(n) ? n : null); }
+  }
   return out;
 }
 function decPP(str){                      // poly: '.'=off, '1'-'4' = chord idx
@@ -457,31 +476,31 @@ function decPP(str){                      // poly: '.'=off, '1'-'4' = chord idx
 }
 function makeAcidSteps(nt,ac,sl){
   const n=decN(nt), a=decB(ac), s=decB(sl);
-  return n.map((v,i)=>({ on: typeof v==='number', tie: v==='_',
-    note: typeof v==='number'?v:0, acc:a[i], sld:s[i] }));
+  return n.map((v,i)=>({ on: typeof v==='number' && Number.isFinite(v), tie: v==='_',
+    note: (typeof v==='number' && Number.isFinite(v))?v:0, acc:a[i], sld:s[i] }));
 }
 function emptyPats(){
   const drums={}; LANES.forEach(l=>drums[l]=decD(''));
-  return { acid:makeAcidSteps('','',''), drums, poly:decPP('') };
+  return { acid:makeAcidSteps('','',''), lead:makeAcidSteps('','',''), drums, poly:decPP('') };
 }
 
 /* ============================================================
    PRESETS — 17 full grooves. Each sets everything.
    ============================================================ */
 const PRESETS = [
-  {"name":"Take On Me","tag":"a-ha · riff","bpm":85,"swing":0,"phat":0.5,"len":48,"acid":{"wave":"square","root":66,"cutoff":2200,"res":3,"env":60,"dec":0.18,"acc":0.5,"gate":0.7,"sub":0,"drive":0.05,"level":0.82,"dly":0.1,"vrb":0.1,"tune":0,"nt":"0 0 0 -2 3 3 2 3 -2 0 -2 . . . . . 0 0 0 -2 3 3 2 3 -2 0 -2 . . . . . 0 0 0 -2 3 3 2 3 -2 0 -2 . . . . .","ac":"100010001000000010001000100000001000100010000000","sl":"000000000000000000000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.14,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"200000002000000020000000200000002000000020000000","snare":"000020000000200000002000000020000000200000002000","chat":"101010101010101010101010101010101010101010101010"}},"poly":{"w1":"square","w2":"sawtooth","det":8,"cutoff":1600,"envA":0,"att":0.02,"rel":0.4,"level":0.28,"dly":0.12,"vrb":0.14,"ch":[["A",[57,61,64]],["D",[50,54,57]],["E",[52,56,59]],["F#m",[54,57,61]]],"pp":"111111111111111122222222222222223333333333333333"},"fx":{"dt":"1/8","fb":0.28,"tone":3200,"size":1.6}},
-  {"name":"Popcorn","tag":"Hot Butter · riff","bpm":130,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"square","root":57,"cutoff":1900,"res":3,"env":40,"dec":0.1,"acc":0.5,"gate":0.4,"sub":0,"drive":0,"level":0.82,"dly":0.1,"vrb":0.08,"tune":0,"nt":"0 . -2 . 0 . -5 . 3 . -5 . 12 . . . 0 . 2 . 15 . 2 . 15 . 0 . 2 . . .","ac":"10101010101000001010101010100000","sl":"00000000000000000000000000000000"},"drums":{"level":0.86,"vrb":0.14,"ktune":47,"kdec":0.5,"hdec":0.4,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"00100010001000100010001000100010"}},"poly":{"w1":"square","w2":"square","det":6,"cutoff":1300,"envA":0,"att":0.01,"rel":0.25,"level":0.2,"dly":0.1,"vrb":0.08,"ch":[["Am",[57,60,64]],["Dm",[50,53,57]],["Em",[52,55,59]],["Am",[57,60,64]]],"pp":"11111111111111113333333333333333"},"fx":{"dt":"1/16","fb":0.25,"tone":3200,"size":1.4}},
-  {"name":"Axel F","tag":"Beverly Hills Cop · riff","bpm":118,"swing":0.06,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","root":65,"cutoff":1600,"res":4,"env":80,"dec":0.16,"acc":0.55,"gate":0.6,"sub":0,"drive":0.1,"level":0.82,"dly":0.14,"vrb":0.1,"tune":0,"nt":"0 . 0 3 0 . 5 0 . 7 0 . 8 7 3 0 0 . 0 3 0 . 5 0 . 7 0 . 8 7 3 0","ac":"10000000100000111000000010000011","sl":"00000000000000000000000000000000"},"drums":{"level":0.92,"vrb":0.15,"ktune":49,"kdec":0.5,"hdec":0.4,"p":{"kick":"20000010200000002000001020000000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010","cow":"00000000001000000000000000100000"}},"poly":{"w1":"sawtooth","w2":"square","det":8,"cutoff":1400,"envA":0,"att":0.02,"rel":0.3,"level":0.28,"dly":0.12,"vrb":0.1,"ch":[["Fm",[53,56,60]],["Cm",[48,51,55]],["Db",[49,53,56]],["Eb",[51,55,58]]],"pp":"11111111111111112222222222222222"},"fx":{"dt":"3/16","fb":0.28,"tone":2800,"size":1.8}},
-  {"name":"Sandstorm","tag":"Darude · riff","bpm":136,"swing":0,"phat":0.55,"len":32,"acid":{"wave":"sawtooth","root":64,"cutoff":1900,"res":5,"env":100,"dec":0.1,"acc":0.6,"gate":0.7,"sub":0.15,"drive":0.15,"level":0.8,"dly":0.14,"vrb":0.12,"tune":0,"nt":"7 7 7 7 7 7 7 7 12 12 12 12 10 10 10 10 5 5 7 7 7 7 7 7 7 7 7 7 12 12 10 10","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.95,"vrb":0.1,"ktune":50,"kdec":0.5,"hdec":0.35,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10001000100010001000100010001000","ohat":"00100010001000100010001000100010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":16,"cutoff":2000,"envA":0,"att":0.05,"rel":0.4,"level":0.4,"dly":0.18,"vrb":0.15,"ch":[["Em",[52,55,59,64]],["C",[48,52,55,60]],["G",[50,55,59,62]],["D",[50,54,57,62]]],"pp":"11111111222222223333333344444444"},"fx":{"dt":"3/16","fb":0.32,"tone":3200,"size":2.2}},
-  {"name":"I Feel Love","tag":"Moroder / Summer · bass","bpm":126,"swing":0,"phat":0.55,"len":32,"acid":{"wave":"sawtooth","root":33,"cutoff":640,"res":5,"env":60,"dec":0.08,"acc":0.5,"gate":0.5,"sub":0.3,"drive":0.12,"level":0.8,"dly":0.3,"vrb":0.08,"tune":0,"nt":"0 12 3 15 5 17 7 19 0 12 3 15 5 17 7 19 0 12 3 15 5 17 7 19 0 12 3 15 5 17 7 19","ac":"10101010101010101010101010101010","sl":"00000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.1,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10001000100010001000100010001000","ohat":"00100010001000100010001000100010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":10,"cutoff":1100,"envA":0,"att":0.4,"rel":1.4,"level":0.2,"dly":0.12,"vrb":0.15,"ch":[["Am",[57,60,64]],["C",[48,52,55]],["Dm",[50,53,57]],["Em",[52,55,59]]],"pp":"11111111111111111111111111111111"},"fx":{"dt":"3/16","fb":0.38,"tone":2800,"size":1.6}},
-  {"name":"Tetris (Korobeiniki)","tag":"trad. · melody","bpm":140,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"square","root":57,"cutoff":2200,"res":3,"env":30,"dec":0.2,"acc":0.5,"gate":0.92,"sub":0,"drive":0,"level":0.82,"dly":0.1,"vrb":0.08,"tune":0,"nt":"19 _ _ _ 14 _ 15 _ 17 _ _ _ 15 _ 14 _ 12 _ _ _ 12 _ 15 _ 19 _ _ _ 17 _ 15 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.85,"vrb":0.12,"ktune":46,"kdec":0.45,"hdec":0.35,"p":{"kick":"20000000200000002000000020000000","snare":"00002000000020000000200000002000","chat":"10101010101010101010101010101010"}},"poly":{"w1":"square","w2":"triangle","det":6,"cutoff":1200,"envA":0,"att":0.01,"rel":0.2,"level":0.3,"dly":0.1,"vrb":0.08,"ch":[["Am",[45,52,57]],["E",[44,52,56]],["Dm",[50,53,57]],["Am",[45,52,57]]],"pp":"11111111111111112222222222222222"},"fx":{"dt":"1/16","fb":0.25,"tone":3200,"size":1.4}},
-  {"name":"Hall of the Mountain King","tag":"Grieg · trad.","bpm":112,"swing":0,"phat":0.5,"len":64,"acid":{"wave":"sawtooth","root":50,"cutoff":900,"res":6,"env":120,"dec":0.16,"acc":0.6,"gate":0.5,"sub":0.3,"drive":0.12,"level":0.8,"dly":0.14,"vrb":0.14,"tune":0,"nt":"0 . 2 . 3 . 5 . 7 . 3 . 7 . . . 11 . 7 . 11 . 7 . . . . . . . . . 0 . 2 . 3 . 5 . 7 . 3 . 7 . . . 11 . 7 . 11 . 7 . . . . . . . . .","ac":"1000000010000000100000001000000010000000100000001000000010000000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.16,"ktune":47,"kdec":0.55,"hdec":0.4,"p":{"kick":"2000000000000000200000000000000020002000200020002000200020002000","ltom":"0000000000000000000000000000001000100010001000100010010001100110","chat":"0000000000000000000000000000000010101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":8,"cutoff":900,"envA":0,"att":0.2,"rel":1,"level":0.28,"dly":0.14,"vrb":0.16,"ch":[["Dm",[38,45,50]],["A",[45,52,57]],["Gm",[43,50,55]],["Dm",[38,45,50]]],"pp":"1111111111111111111111111111111122222222222222221111111111111111"},"fx":{"dt":"3/8","fb":0.32,"tone":2200,"size":2.4}},
-  {"name":"Enola Gay","tag":"OMD · riff","bpm":132,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","root":62,"cutoff":2000,"res":13,"env":120,"dec":0.14,"acc":0.55,"gate":0.8,"sub":0.1,"drive":0.15,"level":0.82,"dly":0.12,"vrb":0.12,"tune":0,"nt":"3 2 3 3 2 3 0 3 2 3 0 5 2 3 0 . 3 2 3 3 2 3 0 3 2 3 0 5 2 3 0 .","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.14,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"20002000200020002000200020002000","snare":"00002000000020000000200000002000","chat":"10101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":10,"cutoff":1600,"envA":0,"att":0.02,"rel":0.3,"level":0.3,"dly":0.12,"vrb":0.14,"ch":[["F",[53,57,60]],["D",[50,54,57]],["Bb",[46,50,53]],["C",[48,52,55]]],"pp":"11111111222222223333333344444444"},"fx":{"dt":"3/16","fb":0.3,"tone":3000,"size":1.8}},
-  {"name":"Just Can't Get Enough","tag":"Depeche Mode · riff","bpm":125,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","root":55,"cutoff":2100,"res":4,"env":60,"dec":0.12,"acc":0.5,"gate":0.6,"sub":0,"drive":0.08,"level":0.82,"dly":0.12,"vrb":0.1,"tune":0,"nt":"0 . 0 . 0 2 4 . 0 . 0 2 4 . 7 . 5 . 4 . 2 . 0 . 0 . 0 2 4 . 0 .","ac":"10001010100010101000101010001010","sl":"00000000000000000000000000000000"},"drums":{"level":0.88,"vrb":0.12,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"20000010200000002000001020000000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010"}},"poly":{"w1":"square","w2":"sawtooth","det":8,"cutoff":1600,"envA":0,"att":0.01,"rel":0.2,"level":0.3,"dly":0.1,"vrb":0.1,"ch":[["G",[55,59,62]],["C",[48,52,55]],["Em",[52,55,59]],["D",[50,54,57]]],"pp":"11111111222222223333333344444444"},"fx":{"dt":"1/8","fb":0.3,"tone":3200,"size":1.4}},
-  {"name":"Cars","tag":"Gary Numan · riff","bpm":118,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","root":57,"cutoff":1400,"res":6,"env":40,"dec":0.3,"acc":0.5,"gate":0.96,"sub":0.15,"drive":0.1,"level":0.8,"dly":0.14,"vrb":0.14,"tune":0,"nt":"0 _ _ _ 0 _ _ _ -2 _ _ _ 0 _ _ _ -5 _ _ _ -5 _ _ _ -2 _ _ _ 0 _ _ _","ac":"10000000100000001000000010000000","sl":"00000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.14,"ktune":47,"kdec":0.5,"hdec":0.4,"p":{"kick":"20000000200000002000000020000000","snare":"00002000000020000000200000002000","chat":"10101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"square","det":9,"cutoff":1300,"envA":0,"att":0.1,"rel":0.5,"level":0.3,"dly":0.12,"vrb":0.16,"ch":[["Am",[57,60,64]],["G",[55,59,62]],["F",[53,57,60]],["Am",[57,60,64]]],"pp":"11111111111111112222222222222222"},"fx":{"dt":"3/16","fb":0.3,"tone":2600,"size":2.2}},
-  {"name":"Tainted Love","tag":"Soft Cell · riff","bpm":144,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","root":36,"cutoff":660,"res":5,"env":80,"dec":0.1,"acc":0.6,"gate":0.5,"sub":0.4,"drive":0.12,"level":0.8,"dly":0.1,"vrb":0.08,"tune":0,"nt":"0 . 0 . 7 . 0 . 3 . 0 . 10 . 0 . 0 . 0 . 7 . 0 . 3 . 10 . 0 . 3 .","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.12,"ktune":47,"kdec":0.48,"hdec":0.38,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010","cow":"00100010001000100010001000100010"}},"poly":{"w1":"square","w2":"sawtooth","det":7,"cutoff":1400,"envA":0,"att":0.01,"rel":0.2,"level":0.26,"dly":0.1,"vrb":0.08,"ch":[["Cm",[48,51,55]],["Ab",[44,48,51]],["Eb",[51,55,58]],["Bb",[46,50,53]]],"pp":"11111111111111113333333333333333"},"fx":{"dt":"1/8","fb":0.26,"tone":2800,"size":1.6}},
-  {"name":"Don't You Want Me","tag":"The Human League · riff","bpm":118,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","root":57,"cutoff":1800,"res":5,"env":70,"dec":0.14,"acc":0.55,"gate":0.6,"sub":0.1,"drive":0.1,"level":0.82,"dly":0.12,"vrb":0.12,"tune":0,"nt":"12 . 7 . 12 . 7 . 15 . 12 . 7 . 5 . 12 . 7 . 12 . 14 . 12 . 7 . 5 . 3 .","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.14,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"20000000200000002000000020000000","snare":"00002000000020000000200000002000","chat":"10101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":9,"cutoff":1500,"envA":0,"att":0.02,"rel":0.3,"level":0.3,"dly":0.12,"vrb":0.14,"ch":[["Am",[57,60,64]],["F",[53,57,60]],["C",[48,52,55]],["G",[55,59,62]]],"pp":"11111111222222223333333344444444"},"fx":{"dt":"3/16","fb":0.3,"tone":3000,"size":1.8}},
-  {"name":"Don't Go","tag":"Yazoo · bass","bpm":132,"swing":0,"phat":0.55,"len":32,"acid":{"wave":"sawtooth","root":41,"cutoff":740,"res":6,"env":100,"dec":0.1,"acc":0.6,"gate":0.5,"sub":0.5,"drive":0.18,"level":0.8,"dly":0.12,"vrb":0.1,"tune":0,"nt":"0 . 0 12 0 . 3 . 0 7 0 . 5 . 0 . 0 . 0 12 0 . 3 . 7 . 5 . 3 . 0 .","ac":"10001010100010001000101010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.92,"vrb":0.12,"ktune":49,"kdec":0.5,"hdec":0.36,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010","ohat":"00100010001000100010001000100010"}},"poly":{"w1":"sawtooth","w2":"square","det":10,"cutoff":1400,"envA":0,"att":0.02,"rel":0.25,"level":0.26,"dly":0.12,"vrb":0.1,"ch":[["Fm",[53,56,60]],["Db",[49,53,56]],["Eb",[51,55,58]],["Cm",[48,51,55]]],"pp":"11111111111111112222222222222222"},"fx":{"dt":"1/16","fb":0.3,"tone":2800,"size":1.6}}
+  {"name":"Take On Me","tag":"a-ha · riff","bpm":85,"swing":0,"phat":0.5,"len":48,"acid":{"wave":"sawtooth","cutoff":520,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.5,"sub":0.4,"drive":0.12,"level":0.78,"dly":0.08,"vrb":0.06,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _","ac":"100010001000100010001000100010001000100010001000","sl":"000000000000000000000000000000000000000000000000"},"lead":{"wave":"square","cutoff":2200,"res":3,"env":50,"dec":0.2,"acc":0.5,"gate":0.7,"sub":0,"drive":0.05,"level":0.72,"dly":0.15,"vrb":0.15,"tune":0,"root":66,"nt":"0 0 0 -2 3 3 2 3 -2 0 -2 . . . . . 0 0 0 -2 3 3 2 3 -2 0 -2 . . . . . 0 0 0 -2 3 3 2 3 -2 0 -2 . . . . .","ac":"100010001000000010001000100000001000100010000000","sl":"000000000000000000000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.14,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"200000002000000020000000200000002000000020000000","snare":"000020000000200000002000000020000000200000002000","chat":"101010101010101010101010101010101010101010101010"}},"poly":{"w1":"square","w2":"sawtooth","det":8,"cutoff":1500,"envA":0,"att":0.02,"rel":0.4,"level":0.22,"dly":0.12,"vrb":0.16,"ch":[["A",[57,61,64]],["D",[50,54,57]],["E",[52,56,59]],["F#m",[54,57,61]]],"pp":"111111111111111122222222222222223333333333333333"},"fx":{"dt":"1/8","fb":0.28,"tone":3200,"size":1.6}},
+  {"name":"Popcorn","tag":"Hot Butter · riff","bpm":130,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","cutoff":520,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.45,"sub":0.4,"drive":0.12,"level":0.78,"dly":0.08,"vrb":0.06,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"square","cutoff":1900,"res":3,"env":50,"dec":0.1,"acc":0.5,"gate":0.4,"sub":0,"drive":0.05,"level":0.72,"dly":0.15,"vrb":0.15,"tune":0,"root":57,"nt":"0 . -2 . 0 . -5 . 3 . -5 . 12 . . . 0 . 2 . 15 . 2 . 15 . 0 . 2 . . .","ac":"10101010101000001010101010100000","sl":"00000000000000000000000000000000"},"drums":{"level":0.86,"vrb":0.14,"ktune":47,"kdec":0.5,"hdec":0.4,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"00100010001000100010001000100010"}},"poly":{"w1":"square","w2":"square","det":6,"cutoff":1300,"envA":0,"att":0.01,"rel":0.25,"level":0.18,"dly":0.1,"vrb":0.08,"ch":[["Am",[57,60,64]],["Dm",[50,53,57]],["Em",[52,55,59]],["Am",[57,60,64]]],"pp":"11111111111111113333333333333333"},"fx":{"dt":"1/16","fb":0.25,"tone":3200,"size":1.4}},
+  {"name":"Axel F","tag":"Beverly Hills Cop · riff","bpm":118,"swing":0.06,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","cutoff":560,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.5,"sub":0.4,"drive":0.12,"level":0.78,"dly":0.08,"vrb":0.06,"tune":0,"root":29,"nt":"0 _ 12 _ 0 _ 12 _ 0 _ 12 _ 0 _ 12 _ 7 _ 19 _ 7 _ 19 _ 7 _ 19 _ 7 _ 19 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1600,"res":4,"env":50,"dec":0.16,"acc":0.5,"gate":0.6,"sub":0,"drive":0.05,"level":0.72,"dly":0.15,"vrb":0.15,"tune":0,"root":65,"nt":"0 . 0 3 0 . 5 0 . 7 0 . 8 7 3 0 0 . 0 3 0 . 5 0 . 7 0 . 8 7 3 0","ac":"10000000100000111000000010000011","sl":"00000000000000000000000000000000"},"drums":{"level":0.92,"vrb":0.15,"ktune":49,"kdec":0.5,"hdec":0.4,"p":{"kick":"20000010200000002000001020000000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010","cow":"00000000001000000000000000100000"}},"poly":{"w1":"sawtooth","w2":"square","det":8,"cutoff":1400,"envA":0,"att":0.02,"rel":0.3,"level":0.24,"dly":0.12,"vrb":0.1,"ch":[["Fm",[53,56,60]],["Cm",[48,51,55]],["Db",[49,53,56]],["Eb",[51,55,58]]],"pp":"11111111111111112222222222222222"},"fx":{"dt":"3/16","fb":0.28,"tone":2800,"size":1.8}},
+  {"name":"Sandstorm","tag":"Darude · riff","bpm":136,"swing":0,"phat":0.55,"len":32,"acid":{"wave":"sawtooth","cutoff":640,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.45,"sub":0.4,"drive":0.15,"level":0.78,"dly":0.08,"vrb":0.06,"tune":0,"root":28,"nt":"0 _ 0 _ 0 _ 0 _ 8 _ 8 _ 8 _ 8 _ 3 _ 3 _ 3 _ 3 _ 10 _ 10 _ 10 _ 10 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1900,"res":5,"env":100,"dec":0.1,"acc":0.5,"gate":0.7,"sub":0,"drive":0.15,"level":0.72,"dly":0.15,"vrb":0.15,"tune":0,"root":64,"nt":"7 7 7 7 7 7 7 7 12 12 12 12 10 10 10 10 5 5 7 7 7 7 7 7 7 7 7 7 12 12 10 10","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.95,"vrb":0.1,"ktune":50,"kdec":0.5,"hdec":0.35,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10001000100010001000100010001000","ohat":"00100010001000100010001000100010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":16,"cutoff":2000,"envA":0,"att":0.05,"rel":0.4,"level":0.34,"dly":0.18,"vrb":0.15,"ch":[["Em",[52,55,59,64]],["C",[48,52,55,60]],["G",[50,55,59,62]],["D",[50,54,57,62]]],"pp":"11111111222222223333333344444444"},"fx":{"dt":"3/16","fb":0.32,"tone":3200,"size":2.2}},
+  {"name":"I Feel Love","tag":"Moroder / Summer · bass+lead","bpm":126,"swing":0,"phat":0.55,"len":32,"acid":{"wave":"sawtooth","cutoff":640,"res":5,"env":60,"dec":0.08,"acc":0.5,"gate":0.5,"sub":0.4,"drive":0.12,"level":0.78,"dly":0.3,"vrb":0.08,"tune":0,"root":33,"nt":"0 12 3 15 5 17 7 19 0 12 3 15 5 17 7 19 0 12 3 15 5 17 7 19 0 12 3 15 5 17 7 19","ac":"10101010101010101010101010101010","sl":"00000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1800,"res":3,"env":50,"dec":0.3,"acc":0.5,"gate":0.95,"sub":0,"drive":0.05,"level":0.55,"dly":0.2,"vrb":0.2,"tune":0,"root":57,"nt":"12 _ _ _ _ _ _ _ 15 _ _ _ _ _ _ _ 19 _ _ _ _ _ _ _ 15 _ _ _ 12 _ _ _","ac":"10000000100000001000000010000000","sl":"00000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.1,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10001000100010001000100010001000","ohat":"00100010001000100010001000100010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":10,"cutoff":1100,"envA":0,"att":0.4,"rel":1.4,"level":0.18,"dly":0.12,"vrb":0.15,"ch":[["Am",[57,60,64]],["C",[48,52,55]],["Dm",[50,53,57]],["Em",[52,55,59]]],"pp":"11111111111111111111111111111111"},"fx":{"dt":"3/16","fb":0.38,"tone":2800,"size":1.6}},
+  {"name":"Tetris (Korobeiniki)","tag":"trad. · melody","bpm":140,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","cutoff":560,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.5,"sub":0.4,"drive":0.12,"level":0.78,"dly":0.08,"vrb":0.06,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"square","cutoff":2200,"res":3,"env":30,"dec":0.2,"acc":0.5,"gate":0.92,"sub":0,"drive":0.05,"level":0.72,"dly":0.15,"vrb":0.15,"tune":0,"root":57,"nt":"19 _ _ _ 14 _ 15 _ 17 _ _ _ 15 _ 14 _ 12 _ _ _ 12 _ 15 _ 19 _ _ _ 17 _ 15 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.85,"vrb":0.12,"ktune":46,"kdec":0.45,"hdec":0.35,"p":{"kick":"20000000200000002000000020000000","snare":"00002000000020000000200000002000","chat":"10101010101010101010101010101010"}},"poly":{"w1":"square","w2":"triangle","det":6,"cutoff":1200,"envA":0,"att":0.01,"rel":0.2,"level":0.24,"dly":0.1,"vrb":0.08,"ch":[["Am",[45,52,57]],["E",[44,52,56]],["Dm",[50,53,57]],["Am",[45,52,57]]],"pp":"11111111111111112222222222222222"},"fx":{"dt":"1/16","fb":0.25,"tone":3200,"size":1.4}},
+  {"name":"Hall of the Mountain King","tag":"Grieg · trad.","bpm":112,"swing":0,"phat":0.5,"len":64,"acid":{"wave":"sawtooth","cutoff":520,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.5,"sub":0.5,"drive":0.12,"level":0.78,"dly":0.08,"vrb":0.06,"tune":0,"root":26,"nt":"0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 7 _ _ _ 7 _ _ _ 7 _ _ _ 7 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _","ac":"1000000000000000100000000000000010000000000000001000000000000000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1000,"res":6,"env":120,"dec":0.16,"acc":0.5,"gate":0.5,"sub":0.2,"drive":0.12,"level":0.72,"dly":0.15,"vrb":0.15,"tune":0,"root":50,"nt":"0 . 2 . 3 . 5 . 7 . 3 . 7 . . . 11 . 7 . 11 . 7 . . . . . . . . . 0 . 2 . 3 . 5 . 7 . 3 . 7 . . . 11 . 7 . 11 . 7 . . . . . . . . .","ac":"1000000010000000100000001000000010000000100000001000000010000000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.16,"ktune":47,"kdec":0.55,"hdec":0.4,"p":{"kick":"2000000000000000200000000000000020002000200020002000200020002000","ltom":"0000000000000000000000000000001000100010001000100010010001100110","chat":"0000000000000000000000000000000010101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":8,"cutoff":900,"envA":0,"att":0.2,"rel":1,"level":0.24,"dly":0.14,"vrb":0.16,"ch":[["Dm",[38,45,50]],["A",[45,52,57]],["Gm",[43,50,55]],["Dm",[38,45,50]]],"pp":"1111111111111111111111111111111122222222222222221111111111111111"},"fx":{"dt":"3/8","fb":0.32,"tone":2200,"size":2.4}},
+  {"name":"Enola Gay","tag":"OMD · riff","bpm":132,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","cutoff":620,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.5,"sub":0.4,"drive":0.12,"level":0.78,"dly":0.08,"vrb":0.06,"tune":0,"root":29,"nt":"0 _ 0 _ 0 _ 0 _ -3 _ -3 _ -3 _ -3 _ 5 _ 5 _ 5 _ 5 _ 7 _ 7 _ 7 _ 7 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":2000,"res":13,"env":120,"dec":0.14,"acc":0.5,"gate":0.8,"sub":0.1,"drive":0.15,"level":0.72,"dly":0.15,"vrb":0.15,"tune":0,"root":62,"nt":"3 2 3 3 2 3 0 3 2 3 0 5 2 3 0 . 3 2 3 3 2 3 0 3 2 3 0 5 2 3 0 .","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.14,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"20002000200020002000200020002000","snare":"00002000000020000000200000002000","chat":"10101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":10,"cutoff":1600,"envA":0,"att":0.02,"rel":0.3,"level":0.28,"dly":0.12,"vrb":0.14,"ch":[["F",[53,57,60]],["D",[50,54,57]],["Bb",[46,50,53]],["C",[48,52,55]]],"pp":"11111111222222223333333344444444"},"fx":{"dt":"3/16","fb":0.3,"tone":3000,"size":1.8}},
+  {"name":"Just Can't Get Enough","tag":"Depeche Mode · riff","bpm":125,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","cutoff":640,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.5,"sub":0.4,"drive":0.12,"level":0.78,"dly":0.08,"vrb":0.06,"tune":0,"root":31,"nt":"0 _ 0 _ 0 _ 0 _ 5 _ 5 _ 5 _ 5 _ 9 _ 9 _ 9 _ 9 _ 7 _ 7 _ 7 _ 7 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":2100,"res":4,"env":50,"dec":0.12,"acc":0.5,"gate":0.6,"sub":0,"drive":0.05,"level":0.72,"dly":0.15,"vrb":0.15,"tune":0,"root":55,"nt":"0 . 0 . 0 2 4 . 0 . 0 2 4 . 7 . 5 . 4 . 2 . 0 . 0 . 0 2 4 . 0 .","ac":"10001010100010101000101010001010","sl":"00000000000000000000000000000000"},"drums":{"level":0.88,"vrb":0.12,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"20000010200000002000001020000000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010"}},"poly":{"w1":"square","w2":"sawtooth","det":8,"cutoff":1600,"envA":0,"att":0.01,"rel":0.2,"level":0.28,"dly":0.1,"vrb":0.1,"ch":[["G",[55,59,62]],["C",[48,52,55]],["Em",[52,55,59]],["D",[50,54,57]]],"pp":"11111111222222223333333344444444"},"fx":{"dt":"1/8","fb":0.3,"tone":3200,"size":1.4}},
+  {"name":"Cars","tag":"Gary Numan · riff","bpm":118,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","cutoff":560,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.5,"sub":0.4,"drive":0.12,"level":0.78,"dly":0.08,"vrb":0.06,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1400,"res":6,"env":40,"dec":0.3,"acc":0.5,"gate":0.96,"sub":0,"drive":0.05,"level":0.6,"dly":0.15,"vrb":0.16,"tune":0,"root":57,"nt":"0 _ _ _ 0 _ _ _ -2 _ _ _ 0 _ _ _ -5 _ _ _ -5 _ _ _ -2 _ _ _ 0 _ _ _","ac":"10000000100000001000000010000000","sl":"00000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.14,"ktune":47,"kdec":0.5,"hdec":0.4,"p":{"kick":"20000000200000002000000020000000","snare":"00002000000020000000200000002000","chat":"10101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"square","det":9,"cutoff":1300,"envA":0,"att":0.1,"rel":0.5,"level":0.26,"dly":0.12,"vrb":0.16,"ch":[["Am",[57,60,64]],["G",[55,59,62]],["F",[53,57,60]],["Am",[57,60,64]]],"pp":"11111111111111112222222222222222"},"fx":{"dt":"3/16","fb":0.3,"tone":2600,"size":2.2}},
+  {"name":"Tainted Love","tag":"Soft Cell · bass+lead","bpm":144,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","cutoff":660,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.5,"sub":0.4,"drive":0.12,"level":0.78,"dly":0.08,"vrb":0.06,"tune":0,"root":36,"nt":"0 . 0 . 7 . 0 . 3 . 0 . 10 . 0 . 0 . 0 . 7 . 0 . 3 . 10 . 0 . 3 .","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"square","cutoff":2400,"res":3,"env":50,"dec":0.08,"acc":0.5,"gate":0.4,"sub":0,"drive":0.05,"level":0.5,"dly":0.18,"vrb":0.14,"tune":0,"root":60,"nt":"0 . . . 3 . . . 0 . . . 3 . . . 0 . . . 3 . . . 7 . 3 . 0 . . .","ac":"10101010101010101010101010101010","sl":"00000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.12,"ktune":47,"kdec":0.48,"hdec":0.38,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010","cow":"00100010001000100010001000100010"}},"poly":{"w1":"square","w2":"sawtooth","det":7,"cutoff":1400,"envA":0,"att":0.01,"rel":0.2,"level":0.24,"dly":0.1,"vrb":0.08,"ch":[["Cm",[48,51,55]],["Ab",[44,48,51]],["Eb",[51,55,58]],["Bb",[46,50,53]]],"pp":"11111111111111113333333333333333"},"fx":{"dt":"1/8","fb":0.26,"tone":2800,"size":1.6}},
+  {"name":"Don't You Want Me","tag":"The Human League · riff","bpm":118,"swing":0,"phat":0.5,"len":32,"acid":{"wave":"sawtooth","cutoff":620,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.5,"sub":0.4,"drive":0.12,"level":0.78,"dly":0.08,"vrb":0.06,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ -4 _ -4 _ -4 _ -4 _ 3 _ 3 _ 3 _ 3 _ -2 _ -2 _ -2 _ -2 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1800,"res":5,"env":50,"dec":0.14,"acc":0.5,"gate":0.6,"sub":0.1,"drive":0.1,"level":0.72,"dly":0.15,"vrb":0.15,"tune":0,"root":57,"nt":"12 . 7 . 12 . 7 . 15 . 12 . 7 . 5 . 12 . 7 . 12 . 14 . 12 . 7 . 5 . 3 .","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.9,"vrb":0.14,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"20000000200000002000000020000000","snare":"00002000000020000000200000002000","chat":"10101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":9,"cutoff":1500,"envA":0,"att":0.02,"rel":0.3,"level":0.28,"dly":0.12,"vrb":0.14,"ch":[["Am",[57,60,64]],["F",[53,57,60]],["C",[48,52,55]],["G",[55,59,62]]],"pp":"11111111222222223333333344444444"},"fx":{"dt":"3/16","fb":0.3,"tone":3000,"size":1.8}},
+  {"name":"Don't Go","tag":"Yazoo · bass+lead","bpm":132,"swing":0,"phat":0.55,"len":32,"acid":{"wave":"sawtooth","cutoff":740,"res":6,"env":60,"dec":0.12,"acc":0.5,"gate":0.5,"sub":0.5,"drive":0.18,"level":0.78,"dly":0.08,"vrb":0.06,"tune":0,"root":41,"nt":"0 . 0 12 0 . 3 . 0 7 0 . 5 . 0 . 0 . 0 12 0 . 3 . 7 . 5 . 3 . 0 .","ac":"10001010100010001000101010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"square","cutoff":2000,"res":4,"env":50,"dec":0.12,"acc":0.5,"gate":0.55,"sub":0,"drive":0.05,"level":0.55,"dly":0.15,"vrb":0.14,"tune":0,"root":65,"nt":"12 . . . 15 . 12 . 8 . . . 12 . . . 12 . . . 15 . 17 . 15 . 12 . 8 . . .","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.92,"vrb":0.12,"ktune":49,"kdec":0.5,"hdec":0.36,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010","ohat":"00100010001000100010001000100010"}},"poly":{"w1":"sawtooth","w2":"square","det":10,"cutoff":1400,"envA":0,"att":0.02,"rel":0.25,"level":0.24,"dly":0.12,"vrb":0.1,"ch":[["Fm",[53,56,60]],["Db",[49,53,56]],["Eb",[51,55,58]],["Cm",[48,51,55]]],"pp":"11111111111111112222222222222222"},"fx":{"dt":"1/16","fb":0.3,"tone":2800,"size":1.6}}
 ];
 
 /* apply a preset object to state (audio-independent) */
@@ -491,6 +510,10 @@ function loadPreset(p){
   Object.assign(state.acid, { wave:a.wave, root:a.root, cutoff:a.cutoff, res:a.res,
     env:a.env, dec:a.dec, acc:a.acc, tune:a.tune ?? 0, sub:a.sub, drive:a.drive,
     level:a.level, dly:a.dly, vrb:a.vrb, gate:a.gate ?? 0.85 });
+  const le = p.lead;
+  if (le) Object.assign(state.lead, { wave:le.wave, root:le.root, cutoff:le.cutoff, res:le.res,
+    env:le.env, dec:le.dec, acc:le.acc, tune:le.tune ?? 0, sub:le.sub ?? 0, drive:le.drive,
+    level:le.level, dly:le.dly, vrb:le.vrb, gate:le.gate ?? 0.8 });
   const d = p.drums;
   Object.assign(state.drums, { level:d.level, vrb:d.vrb, ktune:d.ktune, kdec:d.kdec, hdec:d.hdec });
   state.drums.mut = {}; state.drums.sol = {};
@@ -501,6 +524,7 @@ function loadPreset(p){
   Object.assign(state.fx, { dt:p.fx.dt, fb:p.fx.fb, tone:p.fx.tone, size:p.fx.size });
   const pat = emptyPats();
   pat.acid = makeAcidSteps(a.nt, a.ac, a.sl);
+  pat.lead = le ? makeAcidSteps(le.nt, le.ac, le.sl) : makeAcidSteps('','','');
   LANES.forEach(l => pat.drums[l] = decD(d.p[l] || ''));
   pat.poly = decPP(po.pp);
   state.pats.A = pat;
@@ -609,7 +633,7 @@ function makeKnob(def){
 }
 
 /* knob definitions */
-const AMB='#e8a838', ACD='#ff9d3c', DRM='#3ad6c4', PLY='#a78bfa';
+const AMB='#e8a838', ACD='#ff9d3c', DRM='#3ad6c4', PLY='#a78bfa', LED='#7cd0ff';
 const KDEFS = [
   // transport
   { id:'bpm',    box:'tknobs', l:'BPM',    min:80,  max:170,  d:126,  fmt:fI,  col:AMB, path:'bpm' },
@@ -628,6 +652,19 @@ const KDEFS = [
   { id:'a.lvl',  box:'acidKnobs', l:'Level',  min:0,  max:1,    d:0.75,fmt:fPc, col:ACD, path:'acid.level' },
   { id:'a.dly',  box:'acidKnobs', l:'Dly Snd',min:0,  max:1,    d:0.25,fmt:fPc, col:ACD, path:'acid.dly' },
   { id:'a.vrb',  box:'acidKnobs', l:'Vrb Snd',min:0,  max:1,    d:0.08,fmt:fPc, col:ACD, path:'acid.vrb' },
+  { id:'a.gate', box:'acidKnobs', l:'Gate',   min:0.2,max:1,    d:0.85,fmt:fPc, col:ACD, path:'acid.gate' },
+  { id:'l.cut',  box:'leadKnobs', l:'Cutoff', min:80, max:5000, d:2000,log:true,fmt:fHz, col:LED, path:'lead.cutoff' },
+  { id:'l.res',  box:'leadKnobs', l:'Reso',   min:0,  max:22,   d:3,   fmt:fN,  col:LED, path:'lead.res' },
+  { id:'l.env',  box:'leadKnobs', l:'Env Mod',min:0,  max:6000, d:60,  fmt:fHz, col:LED, path:'lead.env' },
+  { id:'l.dec',  box:'leadKnobs', l:'Decay',  min:0.03,max:0.7, d:0.2, fmt:fS,  col:LED, path:'lead.dec' },
+  { id:'l.acc',  box:'leadKnobs', l:'Accent', min:0,  max:1,    d:0.5, fmt:fPc, col:LED, path:'lead.acc' },
+  { id:'l.tune', box:'leadKnobs', l:'Tune',   min:-12,max:12,   d:0,   fmt:v=>v.toFixed(1)+'st', col:LED, path:'lead.tune' },
+  { id:'l.sub',  box:'leadKnobs', l:'Sub',    min:0,  max:1,    d:0,   fmt:fPc, col:LED, path:'lead.sub' },
+  { id:'l.drv',  box:'leadKnobs', l:'Drive',  min:0,  max:1,    d:0.05,fmt:fPc, col:LED, path:'lead.drive' },
+  { id:'l.lvl',  box:'leadKnobs', l:'Level',  min:0,  max:1,    d:0.7, fmt:fPc, col:LED, path:'lead.level' },
+  { id:'l.dly',  box:'leadKnobs', l:'Dly Snd',min:0,  max:1,    d:0.15,fmt:fPc, col:LED, path:'lead.dly' },
+  { id:'l.vrb',  box:'leadKnobs', l:'Vrb Snd',min:0,  max:1,    d:0.15,fmt:fPc, col:LED, path:'lead.vrb' },
+  { id:'l.gate', box:'leadKnobs', l:'Gate',   min:0.2,max:1,    d:0.8, fmt:fPc, col:LED, path:'lead.gate' },
   // drums
   { id:'d.ktune',box:'drumKnobs', l:'BD Tune', min:35, max:70,  d:50,  fmt:fHz, col:DRM, path:'drums.ktune' },
   { id:'d.kdec', box:'drumKnobs', l:'BD Decay',min:0.15,max:1.2,d:0.5, fmt:fS,  col:DRM, path:'drums.kdec' },
@@ -652,10 +689,11 @@ const KDEFS = [
 /* ---------- step grids ---------- */
 const stepCols = [];              // stepCols[i] = pads to highlight for playhead
 for (let i=0;i<MAX_STEPS;i++) stepCols.push([]);
-const acidCells = [], drumCells = {}, polyCells = [];
+const acidCells = [], leadCells = [], drumCells = {}, polyCells = [];
 
-function buildAcidGrid(){
-  const g = $('acidGrid');
+/* generic mono-voice step grid — used by both the bass (acid) and lead lanes */
+function buildMonoGrid(boxId, laneKey, cells, renderFn){
+  const g = $(boxId);
   for (let i=0;i<MAX_STEPS;i++){
     const col = document.createElement('div');
     col.className = 'acol' + (i%4===0 && i>0 ? ' q' : '') + (i%16===0 && i>0 ? ' bar' : '');
@@ -668,14 +706,13 @@ function buildAcidGrid(){
     col.appendChild(pad); col.appendChild(mrow);
     g.appendChild(col);
     stepCols[i].push(pad);
-    acidCells.push({pad, ac, sl, col});
+    cells.push({pad, ac, sl, col});
 
-    /* pad: click toggles; vertical drag on a lit step edits the note */
     let downY=0, moved=false, wasOn=false, startNote=0, pid=null;
     pad.addEventListener('pointerdown', e => {
-      const s = curPat().acid[i];
+      const s = curPat()[laneKey][i];
       downY = e.clientY; moved=false; wasOn = s.on; startNote = s.note; pid=e.pointerId;
-      if (!s.on){ s.on = true; renderAcid(); }
+      if (!s.on){ s.on = true; s.tie=false; renderFn(); }
       pad.setPointerCapture(e.pointerId);
       e.preventDefault();
     });
@@ -684,37 +721,41 @@ function buildAcidGrid(){
       const dy = downY - e.clientY;
       if (Math.abs(dy) > 5) moved = true;
       if (moved){
-        const s = curPat().acid[i];
+        const s = curPat()[laneKey][i];
         s.note = clamp(startNote + Math.round(dy/9), -12, 24);
-        renderAcid();
+        renderFn();
       }
     });
     const up = () => {
       if (pid===null) return;
       pid=null;
-      if (!moved && wasOn){ curPat().acid[i].on = false; renderAcid(); }
+      if (!moved && wasOn){ curPat()[laneKey][i].on = false; renderFn(); }
     };
     pad.addEventListener('pointerup', up);
     pad.addEventListener('pointercancel', up);
-    ac.addEventListener('click', ()=>{ const s=curPat().acid[i]; s.acc=!s.acc; renderAcid(); });
-    sl.addEventListener('click', ()=>{ const s=curPat().acid[i]; s.sld=!s.sld; renderAcid(); });
+    ac.addEventListener('click', ()=>{ const s=curPat()[laneKey][i]; s.acc=!s.acc; renderFn(); });
+    sl.addEventListener('click', ()=>{ const s=curPat()[laneKey][i]; s.sld=!s.sld; renderFn(); });
   }
 }
-function renderAcid(){
-  const pat = curPat().acid;
+function renderMonoGrid(laneKey, cells, rootKey, waveElId){
+  const pat = curPat()[laneKey];
   for (let i=0;i<MAX_STEPS;i++){
-    const c = acidCells[i], s = pat[i];
+    const c = cells[i], s = pat[i];
     c.col.style.display = i>=state.len ? 'none' : '';   // only show active steps
     if (i>=state.len) continue;
     c.pad.classList.toggle('on', s.on);
     c.pad.classList.toggle('held', !!s.tie);            // tie = the previous note sustains
     c.pad.classList.toggle('acc', s.on && s.acc);
-    c.pad.textContent = s.on ? noteName(state.acid.root + s.note) : (s.tie ? '‑' : '');
+    c.pad.textContent = s.on ? noteName(state[rootKey].root + s.note) : (s.tie ? '‑' : '');
     c.ac.classList.toggle('on', s.acc);
     c.sl.classList.toggle('on', s.sld);
   }
-  $('acidWave').textContent = state.acid.wave==='square' ? 'SQR' : 'SAW';
+  if (waveElId) $(waveElId).textContent = state[rootKey].wave==='square' ? 'SQR' : 'SAW';
 }
+function buildAcidGrid(){ buildMonoGrid('acidGrid','acid',acidCells,renderAcid); }
+function buildLeadGrid(){ buildMonoGrid('leadGrid','lead',leadCells,renderLead); }
+function renderAcid(){ renderMonoGrid('acid',acidCells,'acid','acidWave'); }
+function renderLead(){ renderMonoGrid('lead',leadCells,'lead','leadWave'); }
 
 function buildDrumGrid(){
   const wrap = $('drumLanes');
@@ -809,7 +850,7 @@ function renderTransport(){
 
 function refreshAll(){
   Object.values(KNOBS).forEach(k => k.set(getPath(k.def.path)));
-  renderAcid(); renderDrums(); renderPoly(); renderTransport();
+  renderAcid(); renderLead(); renderDrums(); renderPoly(); renderTransport();
   if (LIVE.drumMix) LIVE.drumMix();
   if (LIVE.retime)  LIVE.retime();
 }
@@ -843,7 +884,7 @@ function wireTransport(){
     state.pats[other] = deep(state.pats[state.slot]);
     const b = $('copyBtn'); b.classList.add('on'); setTimeout(()=>b.classList.remove('on'), 250);
   });
-  $('lenSel').addEventListener('change', e=>{ state.len = +e.target.value; renderAcid(); renderDrums(); renderPoly(); });
+  $('lenSel').addEventListener('change', e=>{ state.len = +e.target.value; renderAcid(); renderLead(); renderDrums(); renderPoly(); });
   $('helpBtn').addEventListener('click', ()=> $('hint').classList.toggle('show'));
   $('hint').addEventListener('click', ()=> $('hint').classList.remove('show'));
 
@@ -851,6 +892,11 @@ function wireTransport(){
     state.acid.wave = state.acid.wave==='square' ? 'sawtooth' : 'square';
     if (LIVE.acidWave) LIVE.acidWave();
     renderAcid();
+  });
+  $('leadWave').addEventListener('click', ()=>{
+    state.lead.wave = state.lead.wave==='square' ? 'sawtooth' : 'square';
+    if (LIVE.leadWave) LIVE.leadWave();
+    renderLead();
   });
   $('polyW1').addEventListener('change', e=> state.poly.w1 = e.target.value);
   $('polyW2').addEventListener('change', e=> state.poly.w2 = e.target.value);
@@ -927,8 +973,9 @@ let masterIn, shelf, satPre, satShape, satPost, glue, limiter, masterGain, analy
 let delayIn, dlyHP, dL, dR, fbL, fbR, lpL, lpR, panL, panR, delayOut;
 let verbIn, vrbHP, conv, verbOut;
 /* instrument buses */
-let ACID = null;                  // persistent 303 voice
+let ACID = null;                  // persistent 303 bass voice
 let acidLevel, acidDlyS, acidVrbS;
+let LEAD = null;                  // second mono voice (topline melody)
 let laneGain = {}, laneVerbG = {}, drumLevelG, drumVrbG;
 let polyBus, polyLevelG, polyDlyS, polyVrbS;
 
@@ -1031,6 +1078,9 @@ function initAudio(){
   acidLevel.connect(acidDlyS); acidDlyS.connect(delayIn);
   acidLevel.connect(acidVrbS); acidVrbS.connect(verbIn);
 
+  /* ---- LEAD: second mono voice for the topline melody ---- */
+  LEAD = mkVoice(state.lead);
+
   /* ---- DRUM BUSES: per-lane gain (mute/solo/level) + weighted reverb sends ---- */
   drumLevelG = g(state.drums.level);
   drumVrbG = g(state.drums.vrb);
@@ -1115,6 +1165,15 @@ LIVE['a.drv'] = v => { if(ACID){
 LIVE['a.lvl'] = v => { if(AC) acidLevel.gain.setTargetAtTime(v, AC.currentTime, 0.03); };
 LIVE['a.dly'] = v => { if(AC) acidDlyS.gain.setTargetAtTime(v, AC.currentTime, 0.03); };
 LIVE['a.vrb'] = v => { if(AC) acidVrbS.gain.setTargetAtTime(v, AC.currentTime, 0.03); };
+LIVE['l.res'] = v => { if(LEAD) LEAD.flt.Q.setTargetAtTime(v, AC.currentTime, 0.03); };
+LIVE['l.sub'] = v => { if(LEAD) LEAD.subG.gain.setTargetAtTime(v*0.9, AC.currentTime, 0.03); };
+LIVE['l.drv'] = v => { if(LEAD){
+  LEAD.drvIn.gain.setTargetAtTime(1+v*11, AC.currentTime, 0.03);
+  LEAD.drvOut.gain.setTargetAtTime(0.8/Math.pow(1+v*11,0.55), AC.currentTime, 0.03); } };
+LIVE['l.lvl'] = v => { if(LEAD) LEAD.level.gain.setTargetAtTime(v, AC.currentTime, 0.03); };
+LIVE['l.dly'] = v => { if(LEAD) LEAD.dlyS.gain.setTargetAtTime(v, AC.currentTime, 0.03); };
+LIVE['l.vrb'] = v => { if(LEAD) LEAD.vrbS.gain.setTargetAtTime(v, AC.currentTime, 0.03); };
+LIVE.leadWave = () => { if(LEAD) LEAD.osc.type = state.lead.wave; };
 LIVE['d.lvl'] = v => { if(AC) drumLevelG.gain.setTargetAtTime(v, AC.currentTime, 0.03); };
 LIVE['d.vrb'] = v => { if(AC) drumVrbG.gain.setTargetAtTime(v, AC.currentTime, 0.03); };
 LIVE['p.lvl'] = v => { if(AC) polyLevelG.gain.setTargetAtTime(v, AC.currentTime, 0.03); };
@@ -1130,8 +1189,63 @@ LIVE['f.size'] = () => { clearTimeout(irTimer); irTimer = setTimeout(()=>buildIR
    303 voice scheduling — accent, slide, filter envelope
    ============================================================ */
 let acidPrev = { on:false, sld:false };
+let leadPrev = { on:false, sld:false };
+/* build a persistent monophonic voice (osc+sub -> filter -> amp -> drive -> level/sends) */
+function mkVoice(PA){
+  const a = {};
+  a.osc = AC.createOscillator(); a.osc.type = PA.wave;
+  a.sub = AC.createOscillator(); a.sub.type = 'sine';
+  a.oscG = g(0.85); a.subG = g((PA.sub||0)*0.9);
+  a.flt = AC.createBiquadFilter(); a.flt.type='lowpass';
+  a.flt.frequency.value = PA.cutoff; a.flt.Q.value = PA.res;
+  a.amp = g(0);
+  a.drvIn = g(1 + PA.drive*11);
+  a.shape = AC.createWaveShaper(); a.shape.curve = shaperCurve(3); a.shape.oversample='2x';
+  a.drvOut = g(0.8/Math.pow(1+PA.drive*11, 0.55));
+  a.osc.connect(a.oscG); a.oscG.connect(a.flt);
+  a.sub.connect(a.subG); a.subG.connect(a.flt);
+  a.flt.connect(a.amp); a.amp.connect(a.drvIn); a.drvIn.connect(a.shape);
+  a.shape.connect(a.drvOut);
+  a.osc.frequency.value = 110; a.sub.frequency.value = 55;
+  a.osc.start(); a.sub.start();
+  a.lastF = 110;
+  a.level = g(PA.level);
+  a.dlyS = g(PA.dly); a.vrbS = g(PA.vrb);
+  a.drvOut.connect(a.level);
+  a.level.connect(masterIn);
+  a.level.connect(a.dlyS); a.dlyS.connect(delayIn);
+  a.level.connect(a.vrbS); a.vrbS.connect(verbIn);
+  return a;
+}
 function acidNote(t, f, acc, glide, willSlide, sd, dur){
-  const a = ACID, A2 = state.acid;
+  monoNote(ACID, state.acid, t, f, acc, glide, willSlide, sd, dur);
+}
+function leadNote(t, f, acc, glide, willSlide, sd, dur){
+  monoNote(LEAD, state.lead, t, f, acc, glide, willSlide, sd, dur);
+}
+/* schedule one mono lane's step i; returns the new "prev" state */
+function schedMono(V, PA, lane, prev, i, t, sd){
+  const st = lane[i];
+  if (!st) return prev;
+  if (st.on){
+    const f = midiF(PA.root + st.note + PA.tune);
+    const glide = prev.on && prev.sld;
+    let dur = 1, j = i + 1;                            // note length from trailing ties
+    while (j < state.len && lane[j] && lane[j].tie){ dur++; j++; }
+    const nx = lane[j % state.len];
+    const willSlide = st.sld && nx && nx.on;
+    monoNote(V, PA, t, f, st.acc, glide, willSlide, sd, dur);
+    return { on:true, sld:willSlide };
+  } else if (st.tie){
+    return prev;                                       // held note continues
+  } else {
+    if (prev.on) monoRelease(V, t);                    // rest ends the note
+    return { on:false, sld:false };
+  }
+}
+function monoNote(V, PA, t, f, acc, glide, willSlide, sd, dur){
+  if (!V) return;
+  const a = V, A2 = PA;
   dur = dur || 1;                                   // note length in steps (from ties)
   const vel = acc ? 0.75 + A2.acc*0.35 : 0.62;
   /* pitch: jump or glide (both osc + sub) */
@@ -1170,10 +1284,11 @@ function acidNote(t, f, acc, glide, willSlide, sd, dur){
     a.amp.gain.setTargetAtTime(0, t + Math.max(sd*dur*g, 0.03), 0.02);
   }
 }
-function acidRelease(t){
-  if (!ACID) return;
-  ACID.amp.gain.cancelScheduledValues(t);
-  ACID.amp.gain.setTargetAtTime(0, t, 0.02);
+function acidRelease(t){ monoRelease(ACID, t); }
+function monoRelease(V, t){
+  if (!V) return;
+  V.amp.gain.cancelScheduledValues(t);
+  V.amp.gain.setTargetAtTime(0, t, 0.02);
 }
 
 /* ============================================================
@@ -1371,24 +1486,9 @@ function scheduleStep(i, t0){
   const pat = state.pats[playSlot];
   if (!pat) return;
 
-  /* --- acid --- */
-  const st = pat.acid[i];
-  if (st.on){
-    const f = midiF(state.acid.root + st.note + state.acid.tune);
-    const glide = acidPrev.on && acidPrev.sld;
-    // note length = this step + any following ties ('_'), so held notes sustain
-    let dur = 1, j = i + 1;
-    while (j < state.len && pat.acid[j] && pat.acid[j].tie){ dur++; j++; }
-    const nextI = j % state.len;
-    const willSlide = st.sld && pat.acid[nextI] && pat.acid[nextI].on;
-    acidNote(t, f, st.acc, glide, willSlide, sd, dur);
-    acidPrev = { on:true, sld:willSlide };
-  } else if (st.tie){
-    /* held: the sustaining note continues — do nothing */
-  } else {
-    if (acidPrev.on) acidRelease(t);                    // rest: end the note
-    acidPrev = { on:false, sld:false };
-  }
+  /* --- bass (acid-303) + lead: two mono voices, same scheduling --- */
+  acidPrev = schedMono(ACID, state.acid, pat.acid, acidPrev, i, t, sd);
+  leadPrev = schedMono(LEAD, state.lead, pat.lead || [], leadPrev, i, t, sd);
 
   /* --- drums --- */
   LANES.forEach(l => {
@@ -1429,6 +1529,7 @@ function startPlay(){
   currentStep = 0; barCount = 0;
   playSlot = state.slot;
   acidPrev = { on:false, sld:false };
+  leadPrev = { on:false, sld:false };
   nextNoteTime = AC.currentTime + 0.06;
   timerID = setInterval(schedulerTick, TICK);
   schedulerTick();
@@ -1524,7 +1625,7 @@ function uiLoop(){
 (function boot(){
   try {
     KDEFS.forEach(makeKnob);
-    buildAcidGrid(); buildDrumGrid(); buildPolyGrid();
+    buildAcidGrid(); buildLeadGrid(); buildDrumGrid(); buildPolyGrid();
     wireTransport();
     applyPreset(0);
     setTimeout(()=>{ $('hint').classList.add('show');

@@ -8,7 +8,10 @@
 
 ## Features
 
-- **ACID-303 / lead voice** — monophonic voice: switchable saw/square oscillator with a sub octave, a resonant low-pass filter with an envelope (turn Env Mod up for the classic 303 squelch, or down for a clean, steady synth lead), **accent**, true legato **slides**, a per-voice overdrive, and a per-preset **gate** that sets how long each note holds (staccato → legato). Per-step note, accent, slide and **note-length (ties)** editing on a lane of up to 64 steps (4 bars).
+- **Two independent mono voices — BASS + LEAD** — a full reproduction needs a bassline *and* a topline at the same time, so Phatty has two monophonic synths, each with its own per-step note lane:
+  - **ACID-303** — the bassline voice: saw/square oscillator + sub octave, a resonant low-pass filter with an envelope (Env Mod up for the classic 303 squelch, down for a clean bass), accent, slides, overdrive.
+  - **LEAD** — the topline voice for the melody/hook, tuned bright and clean by default.
+  Both share the same features: **accent**, legato **slides**, a per-preset **gate** (staccato → legato note length), and per-step note / accent / slide / **note-length (ties)** editing on a lane of up to 64 steps (4 bars).
 - **Drum machine** — 8 hand-tuned synthesized voices: kick (pitch-drop + click), snare, 4-burst clap, metallic closed/open hats (with hi-hat choke), two toms and a cowbell. Per-lane **mute/solo** and per-step accent.
 - **Poly synth** — 5-voice subtractive synth with dual detuned oscillators, stereo spread, and independent filter + amp ADSR. A 16-step chord sequencer runs chord stabs, basslines and pads.
 - **Phat master bus** — warm low shelf → tape-style saturation → glue compressor → brickwall limiter, with a single **PHAT** macro that drives drive, sub weight and squeeze together.
@@ -32,7 +35,7 @@ Best experienced with headphones. 🎧
 
 ## Presets — note-accurate reproductions
 
-Every preset transcribes a classic's **signature riff step-for-step** into the mono acid lead (which has per-step pitch control), voiced as a clean, low-resonance synth. Several use the extended sequencer to run over multiple bars so the riff and its chord progression develop like the real record.
+Every preset lays out the record's parts across the two mono voices and the chords: the **bassline** on ACID-303 and the **signature melody/hook** on LEAD (for bass-led tracks like *I Feel Love* the iconic bassline stays on ACID-303 and a topline sits on LEAD), with chord stabs/pads on POLY and a matching drum groove. Several use the extended sequencer to run over multiple bars so the parts develop like the real record.
 
 | # | Preset | Reproduces | Length |
 |---|--------|-----------|--------|
