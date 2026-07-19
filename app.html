@@ -737,7 +737,51 @@ const PRESETS = [
       level:0.3, dly:0.1, vrb:0.08,
       ch:[['Am',[57,60,64,69]],['G',[55,59,62,67]],['Am7',[57,60,64,67]],['C',[48,55,60,64]]],
       pp:'.... .... .... 1...' },
-    fx:{ dt:'3/16', fb:0.35, tone:2400, size:1.8 } }
+    fx:{ dt:'3/16', fb:0.35, tone:2400, size:1.8 } },
+
+  /* ---- Exact-riff reproductions: the signature hook transcribed note-for-note
+         into the mono acid lane, voiced as a bright low-resonance lead ---- */
+  { name:'Take On Me', tag:'a-ha · exact riff', bpm:85, swing:0, phat:0.55,
+    acid:{ wave:'square', root:66, cutoff:1700, res:5, env:700, dec:0.22, acc:0.5,
+      sub:0.15, drive:0.1, level:0.82, dly:0.12, vrb:0.12, tune:0,
+      nt:'0 0 0 -2  3 3 2 3  -2 0 -2 .  . . . .',
+      ac:'1000 1000 1000 0000', sl:'0000 0000 0000 0000' },
+    drums:{ level:0.9, vrb:0.14, ktune:48, kdec:0.5, hdec:0.4, p:{
+      kick:'2000 0000 2000 0000', snare:'0000 2000 0000 2000',
+      chat:'1010 1010 1010 1010' } },
+    poly:{ w1:'square', w2:'sawtooth', det:8, cutoff:1600, envA:800, att:0.008, rel:0.24,
+      level:0.32, dly:0.12, vrb:0.14,
+      ch:[['A',[57,61,64]],['D',[50,54,57]],['E',[52,56,59]],['F#m',[54,57,61]]],
+      pp:'1... 2... 3... 1...' },
+    fx:{ dt:'1/8', fb:0.3, tone:3200, size:1.6 } },
+
+  { name:'Popcorn', tag:'Hot Butter · exact riff', bpm:130, swing:0, phat:0.55,
+    acid:{ wave:'square', root:57, cutoff:1500, res:5, env:800, dec:0.12, acc:0.5,
+      sub:0.12, drive:0.08, level:0.82, dly:0.1, vrb:0.08, tune:0,
+      nt:'0 -2 0 -5  3 -5 12 0  2 15 2 15  0 2 . .',
+      ac:'1010 1010 1010 1000', sl:'0000 0000 0000 0000' },
+    drums:{ level:0.86, vrb:0.16, ktune:47, kdec:0.5, hdec:0.4, p:{
+      kick:'2000 2000 2000 2000', clap:'0000 2000 0000 2000',
+      chat:'0010 0010 0010 0010' } },
+    poly:{ w1:'square', w2:'square', det:7, cutoff:1400, envA:600, att:0.008, rel:0.18,
+      level:0.25, dly:0.1, vrb:0.08,
+      ch:[['Am',[57,60,64]],['Dm',[50,53,57]],['Em',[52,55,59]],['Am',[57,60,64]]],
+      pp:'1... .... 2... 3...' },
+    fx:{ dt:'1/16', fb:0.25, tone:3200, size:1.4 } },
+
+  { name:'Axel F', tag:'Beverly Hills Cop · exact riff', bpm:118, swing:0.06, phat:0.6,
+    acid:{ wave:'sawtooth', root:65, cutoff:1600, res:6, env:900, dec:0.2, acc:0.55,
+      sub:0.1, drive:0.12, level:0.82, dly:0.15, vrb:0.1, tune:0,
+      nt:'0 . 0 3  0 . 5 0  . 7 0 .  8 7 3 0',
+      ac:'1000 0000 1000 0011', sl:'0000 0000 0000 0000' },
+    drums:{ level:0.92, vrb:0.15, ktune:49, kdec:0.5, hdec:0.4, p:{
+      kick:'2000 0010 2000 0000', clap:'0000 2000 0000 2000',
+      chat:'1010 1010 1010 1010', cow:'0000 0000 0010 0000' } },
+    poly:{ w1:'sawtooth', w2:'square', det:8, cutoff:1500, envA:700, att:0.01, rel:0.22,
+      level:0.3, dly:0.12, vrb:0.1,
+      ch:[['Fm',[53,56,60]],['Cm',[48,51,55]],['Db',[49,53,56]],['Eb',[51,55,58]]],
+      pp:'1... .... 2... ....' },
+    fx:{ dt:'3/16', fb:0.3, tone:2800, size:1.8 } }
 ];
 
 /* apply a preset object to state (audio-independent) */

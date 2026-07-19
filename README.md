@@ -13,7 +13,7 @@
 - **Poly synth** — 5-voice subtractive synth with dual detuned oscillators, stereo spread, and independent filter + amp ADSR. A 16-step chord sequencer runs chord stabs, basslines and pads.
 - **Phat master bus** — warm low shelf → tape-style saturation → glue compressor → brickwall limiter, with a single **PHAT** macro that drives drive, sub weight and squeeze together.
 - **Effects** — tempo-synced ping-pong delay send and a decaying-noise convolution reverb send, both fed from every instrument. The sends are **high-passed** so low bass and kick energy never recirculate into the delay feedback or the reverb tail — the repeats stay clean instead of building into a boomy wash.
-- **20 groove presets based on famous tracks** — each an affectionate, in-the-style-of homage to one of the best-known electronic records ever made (see below), plus a **Randomize** button that generates fresh, scale-constrained patterns that always sound musical.
+- **23 presets** — 20 in-the-style-of homages to the best-known electronic records ever made, plus **3 note-accurate reproductions** that transcribe a classic's signature riff step-for-step into the acid lead (see below), plus a **Randomize** button that generates fresh, scale-constrained patterns that always sound musical.
 - **Rock-solid transport** — lookahead scheduler (the classic 25 ms / 100 ms "two clocks" pattern) for tight timing, swing, adjustable pattern length (8/12/16), A/B pattern slots with chaining and copy, a glowing playhead synced to the audio, and an analyser-driven VU meter.
 - **Custom knobs** — pointer-draggable (mouse and touch), double-tap to reset, mouse-wheel support, with a live value readout.
 - **Desktop & mobile** — a responsive layout that auto-detects your device and reflows to a single scrollable column with larger touch targets on phones. Press **Space** to play/stop on desktop.
@@ -57,6 +57,18 @@ Each of the 20 presets recreates the *feel* of one of the best-known electronic 
 | 20 | Squelch State | Acid Techno | Josh Wink — *Higher State of Consciousness* (1995) |
 
 These are original patterns paying tribute to the tracks that defined each style — no audio or MIDI is copied from the originals.
+
+### Exact-riff reproductions
+
+Three further presets go a step further and transcribe a classic's **signature riff note-for-note** into the mono acid lane (which has per-step pitch), voiced as a bright, low-resonance lead:
+
+| # | Preset | Riff reproduced |
+|---|--------|-----------------|
+| 21 | Take On Me | a-ha — the Juno intro riff (1985) |
+| 22 | Popcorn | Hot Butter / Gershon Kingsley — the Moog melody (1972) |
+| 23 | Axel F | Harold Faltermeyer — the *Beverly Hills Cop* theme (1984) |
+
+The synth voice is Phatty's own — only the melody line is reproduced, as a tribute.
 
 ## Files
 
