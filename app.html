@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>GB-303 Groovebox</title>
+<title>Phatty — Acid Groovebox</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   GB-303 GROOVEBOX — styles
+   PHATTY — styles
    Palette: near-black #0a0a12, amber #e8a838, acid=amber/orange,
    drums=cyan, poly=violet
    ============================================================ */
@@ -280,11 +280,11 @@ main{padding:14px 16px 60px;display:flex;flex-direction:column;gap:14px;max-widt
 <div id="overlay">
   <div class="pwr">&#9211;</div>
   <h1>TAP TO POWER ON</h1>
-  <p>ANALOG-STYLE GROOVEBOX &middot; 303 + DRUMS + POLY</p>
+  <p>PHATTY &middot; ANALOG-STYLE ACID GROOVEBOX &middot; 303 + DRUMS + POLY</p>
 </div>
 
 <header id="transport">
-  <div class="brand"><b>GB&middot;303</b><span>GROOVEBOX</span></div>
+  <div class="brand"><b>PHATTY</b><span>ACID GROOVEBOX</span></div>
   <button id="playBtn" title="Play/Stop (Space)">&#9654;</button>
   <div class="tgroup" id="tknobs"></div>
   <div class="tsep"></div>
@@ -458,251 +458,281 @@ function emptyPats(){
    PRESETS — 17 full grooves. Each sets everything.
    ============================================================ */
 const PRESETS = [
-{ name:'Warehouse Alley', tag:'Acid House', bpm:124, swing:0.16, phat:0.6,
-  acid:{ wave:'sawtooth', root:33, cutoff:520, res:16, env:2600, dec:0.21, acc:0.7,
-    sub:0.45, drive:0.4, level:0.8, dly:0.3, vrb:0.08, tune:0,
-    nt:'0 . 0 12  . . 3 .  0 . 10 .  12 . 3 .',
-    ac:'1000 0010 0100 1000', sl:'0010 0000 0001 0000' },
-  drums:{ level:0.92, vrb:0.25, ktune:50, kdec:0.5, hdec:0.42, p:{
-    kick:'2000 2000 2000 2000', clap:'0000 2000 0000 2000',
-    chat:'1000 1010 1000 1010', ohat:'0020 0000 0020 0000' } },
-  poly:{ w1:'sawtooth', w2:'square', det:9, cutoff:1500, envA:900, att:0.006, rel:0.22,
-    level:0.5, dly:0.35, vrb:0.3,
-    ch:[['Am7',[57,60,64,67]],['Fmaj7',[53,57,60,64]],['G6',[55,59,62,64]],['Em7',[52,55,59,62]]],
-    pp:'.... ..1. .... ..2.' },
-  fx:{ dt:'3/16', fb:0.42, tone:2600, size:2.0 } },
+  // 1. Homage: Phuture "Acid Tracks" (1987)
+  { name:'Warehouse Squelch', tag:'Acid House', bpm:122, swing:0.05, phat:0.6,
+    acid:{ wave:'sawtooth', root:33, cutoff:520, res:22, env:3200, dec:0.22, acc:0.8,
+      sub:0.5, drive:0.45, level:0.82, dly:0.28, vrb:0.1, tune:0,
+      nt:'0 0 12 0  0 12 0 3  0 0 12 0  10 0 12 0',
+      ac:'1000 0010 1000 0101', sl:'0100 0100 0010 0110' },
+    drums:{ level:0.92, vrb:0.2, ktune:49, kdec:0.5, hdec:0.4, p:{
+      kick:'2000 2000 2000 2000', clap:'0000 2000 0000 2000',
+      chat:'1101 1101 1101 1101', ohat:'0020 0020 0020 0020' } },
+    poly:{ w1:'sawtooth', w2:'square', det:8, cutoff:1200, envA:700, att:0.006, rel:0.2,
+      level:0.25, dly:0.3, vrb:0.25,
+      ch:[['Am',[57,60,64]],['Am7',[55,60,64,67]],['G',[55,59,62]],['F',[53,57,60]]],
+      pp:'.... .... ..1. ....' },
+    fx:{ dt:'3/16', fb:0.42, tone:2600, size:2.0 } },
 
-{ name:'Motor City', tag:'Detroit Techno', bpm:129, swing:0.06, phat:0.55,
-  acid:{ wave:'square', root:36, cutoff:700, res:10, env:1600, dec:0.18, acc:0.55,
-    sub:0.5, drive:0.22, level:0.7, dly:0.35, vrb:0.12, tune:0,
-    nt:'0 . 7 .  0 . 3 5  . 0 . 7  10 . 12 .',
-    ac:'1000 1000 0100 0010', sl:'0000 0001 0000 0010' },
-  drums:{ level:0.92, vrb:0.22, ktune:48, kdec:0.55, hdec:0.35, p:{
-    kick:'2000 2000 2000 2000', clap:'0000 2000 0000 2000',
-    chat:'2111 2111 2111 2111', ltom:'0000 0000 0010 0000' } },
-  poly:{ w1:'sawtooth', w2:'sawtooth', det:14, cutoff:1100, envA:600, att:0.35, rel:1.4,
-    level:0.5, dly:0.4, vrb:0.45,
-    ch:[['Cm9',[48,51,55,58,62]],['Abmaj7',[44,48,51,55]],['Fm9',[41,44,48,51,55]],['Bb6',[46,50,53,55]]],
-    pp:'1... .... .... 2...' },
-  fx:{ dt:'1/4', fb:0.45, tone:3200, size:2.6 } },
+  // 2. Homage: Josh Wink "Higher State of Consciousness" (1995)
+  { name:'Higher Scream', tag:'Acid Techno', bpm:130, swing:0.03, phat:0.65,
+    acid:{ wave:'sawtooth', root:31, cutoff:700, res:27, env:4800, dec:0.18, acc:0.9,
+      sub:0.35, drive:0.7, level:0.8, dly:0.25, vrb:0.08, tune:0,
+      nt:'0 0 0 0  12 0 0 12  0 0 0 0  12 0 12 0',
+      ac:'1001 1001 1001 1010', sl:'0001 0010 0001 0100' },
+    drums:{ level:0.94, vrb:0.15, ktune:50, kdec:0.45, hdec:0.35, p:{
+      kick:'2000 2000 2000 2000', clap:'0000 2000 0000 2000',
+      chat:'1101 1101 1101 1101', ohat:'0020 0020 0020 0020' } },
+    poly:{ w1:'sawtooth', w2:'square', det:9, cutoff:1400, envA:800, att:0.006, rel:0.18,
+      level:0.2, dly:0.3, vrb:0.25,
+      ch:[['Gm',[55,58,62]],['Bb',[58,62,65]],['F',[53,57,60]],['Eb',[51,55,58]]],
+      pp:'.... .... .... ....' },
+    fx:{ dt:'1/8', fb:0.45, tone:3000, size:1.8 } },
 
-{ name:"Planet Rock'd", tag:'Electro', bpm:130, swing:0, phat:0.6,
-  acid:{ wave:'square', root:31, cutoff:420, res:12, env:1900, dec:0.16, acc:0.6,
-    sub:0.7, drive:0.3, level:0.78, dly:0.22, vrb:0.05, tune:0,
-    nt:'0 . . 0  . . 12 .  0 . 0 .  3 . 7 .',
-    ac:'1000 0010 1000 0010', sl:'0000 0000 0000 0010' },
-  drums:{ level:0.95, vrb:0.28, ktune:46, kdec:0.6, hdec:0.35, p:{
-    kick:'2000 0010 0010 0000', snare:'0000 2000 0000 2000',
-    chat:'1010 1010 1010 1010', ohat:'0000 0000 0000 0020',
-    cow:'0010 0000 0010 0000', htom:'0000 0000 0000 0210' } },
-  poly:{ w1:'square', w2:'sawtooth', det:8, cutoff:1800, envA:1200, att:0.005, rel:0.15,
-    level:0.42, dly:0.4, vrb:0.2,
-    ch:[['Gm',[55,58,62]],['Ebmaj7',[51,55,58,62]],['F',[53,57,60]],['Dm',[50,53,57]]],
-    pp:'.... .... .... ..1.' },
-  fx:{ dt:'1/8', fb:0.38, tone:3600, size:1.6 } },
+  // 3. Homage: Hardfloor "Acperience 1" (1992)
+  { name:'Bounce Experience', tag:'Acid Trance', bpm:135, swing:0.02, phat:0.7,
+    acid:{ wave:'sawtooth', root:33, cutoff:600, res:24, env:3800, dec:0.2, acc:0.85,
+      sub:0.45, drive:0.5, level:0.82, dly:0.3, vrb:0.12, tune:0,
+      nt:'0 12 0 12  0 12 0 10  0 12 0 12  3 12 0 12',
+      ac:'1010 1010 1010 1010', sl:'0101 0100 0101 0010' },
+    drums:{ level:0.93, vrb:0.2, ktune:50, kdec:0.46, hdec:0.38, p:{
+      kick:'2000 2000 2000 2000', clap:'0000 2000 0000 2000',
+      chat:'1101 1101 1101 1101', ohat:'0020 0020 0020 0020',
+      ltom:'0000 0001 0000 0010', htom:'0000 0000 0001 0000' } },
+    poly:{ w1:'sawtooth', w2:'square', det:10, cutoff:1400, envA:800, att:0.01, rel:0.25,
+      level:0.3, dly:0.35, vrb:0.3,
+      ch:[['Am',[57,60,64]],['G',[55,59,62]],['F',[53,57,60]],['Em',[52,55,59]]],
+      pp:'.... ..1. .... ..2.' },
+    fx:{ dt:'3/16', fb:0.5, tone:2800, size:2.4 } },
 
-{ name:'Deep End', tag:'Deep House', bpm:122, swing:0.24, phat:0.55,
-  acid:{ wave:'sawtooth', root:31, cutoff:300, res:7, env:900, dec:0.24, acc:0.4,
-    sub:0.75, drive:0.1, level:0.7, dly:0.1, vrb:0.05, tune:0,
-    nt:'0 . . 0  . . . .  7 . . 5  . . 3 .',
-    ac:'1000 0000 1000 0000', sl:'0000 0000 0001 0000' },
-  drums:{ level:0.88, vrb:0.3, ktune:47, kdec:0.55, hdec:0.5, p:{
-    kick:'2000 2000 2000 2000', clap:'0000 1000 0000 1000',
-    chat:'0020 0021 0020 0021', ohat:'0000 0002 0000 0000',
-    ltom:'0000 0000 0001 0000' } },
-  poly:{ w1:'sawtooth', w2:'triangle', det:11, cutoff:1000, envA:700, att:0.012, rel:0.35,
-    level:0.6, dly:0.3, vrb:0.4,
-    ch:[['Cm9',[48,51,55,58,62]],['Fm9',[53,56,60,63,67]],['Abmaj9',[44,48,51,55,58]],['G7#5',[43,47,51,53]]],
-    pp:'1..1 .... 2... ....' },
-  fx:{ dt:'3/16', fb:0.4, tone:2200, size:2.4 } },
+  // 4. Homage: Plastikman "Spastik" (1993)
+  { name:'Drum Delirium', tag:'Minimal', bpm:133, swing:0, phat:0.5,
+    acid:{ wave:'square', root:33, cutoff:260, res:8, env:900, dec:0.3, acc:0.5,
+      sub:0.8, drive:0.15, level:0.7, dly:0.1, vrb:0.05, tune:0,
+      nt:'0 . . .  . . . .  0 . . .  . . . .',
+      ac:'1000 0000 1000 0000', sl:'0000 0000 0000 0000' },
+    drums:{ level:0.98, vrb:0.18, ktune:50, kdec:0.42, hdec:0.38, p:{
+      kick:'2000 2000 2000 2000', snare:'0110 0011 0110 1122',
+      clap:'0000 1000 0010 0100', chat:'1011 1101 1011 1111',
+      ohat:'0000 0020 0000 0002', ltom:'0002 0000 0100 0000',
+      htom:'0000 0002 0000 1000' } },
+    poly:{ w1:'sawtooth', w2:'square', det:8, cutoff:1000, envA:500, att:0.01, rel:0.2,
+      level:0.2, dly:0.2, vrb:0.2,
+      ch:[['Am',[57,60,64]],['Am',[57,60,64]],['Am',[57,60,64]],['Am',[57,60,64]]],
+      pp:'.... .... .... ....' },
+    fx:{ dt:'1/16', fb:0.35, tone:2200, size:1.4 } },
 
-{ name:'Squelch Factory', tag:'Acid Techno', bpm:138, swing:0.04, phat:0.75,
-  acid:{ wave:'sawtooth', root:33, cutoff:480, res:24, env:4200, dec:0.17, acc:0.85,
-    sub:0.3, drive:0.7, level:0.82, dly:0.3, vrb:0.1, tune:0,
-    nt:'0 0 12 0  3 0 15 12  0 0 10 0  7 12 0 3',
-    ac:'1010 0101 1001 0110', sl:'0100 1000 0010 0101' },
-  drums:{ level:0.95, vrb:0.18, ktune:52, kdec:0.42, hdec:0.32, p:{
-    kick:'2000 2000 2000 2010', clap:'0000 2000 0000 2000',
-    chat:'1111 1111 1111 1111', ohat:'0020 0020 0020 0020' } },
-  poly:{ w1:'sawtooth', w2:'square', det:7, cutoff:1600, envA:800, att:0.004, rel:0.12,
-    level:0.3, dly:0.35, vrb:0.25,
-    ch:[['Am',[57,60,64]],['G',[55,59,62]],['F',[53,57,60]],['E',[52,56,59]]],
-    pp:'' },
-  fx:{ dt:'1/8', fb:0.45, tone:3000, size:1.5 } },
+  // 5. Homage: Model 500 "No UFO's" (1985)
+  { name:'Night Flight', tag:'Detroit Techno', bpm:122, swing:0.1, phat:0.55,
+    acid:{ wave:'square', root:31, cutoff:480, res:14, env:2200, dec:0.25, acc:0.7,
+      sub:0.55, drive:0.3, level:0.8, dly:0.25, vrb:0.1, tune:0,
+      nt:'0 . . 0  . . 0 .  10 . 0 .  . 7 . 3',
+      ac:'1001 0010 1000 0100', sl:'0000 0000 1000 0001' },
+    drums:{ level:0.92, vrb:0.2, ktune:49, kdec:0.5, hdec:0.4, p:{
+      kick:'2000 2000 2000 2000', snare:'0000 2000 0000 2000',
+      chat:'0010 0010 0010 0010', ohat:'0000 0000 0020 0000' } },
+    poly:{ w1:'square', w2:'sawtooth', det:7, cutoff:1400, envA:800, att:0.005, rel:0.15,
+      level:0.4, dly:0.3, vrb:0.2,
+      ch:[['Gm',[55,58,62]],['F6',[53,57,60,62]],['Eb',[51,55,58]],['Dm',[50,53,57]]],
+      pp:'..1. .... ..2. ...3' },
+    fx:{ dt:'1/8', fb:0.38, tone:2400, size:1.8 } },
 
-{ name:'Jack Move', tag:"Jackin' House", bpm:126, swing:0.32, phat:0.6,
-  acid:{ wave:'sawtooth', root:31, cutoff:560, res:13, env:2100, dec:0.15, acc:0.6,
-    sub:0.55, drive:0.28, level:0.75, dly:0.2, vrb:0.06, tune:0,
-    nt:'0 12 . 0  . 12 0 .  0 12 . 0  10 . 7 .',
-    ac:'1000 0100 1000 1010', sl:'0000 0000 0000 0010' },
-  drums:{ level:0.92, vrb:0.28, ktune:49, kdec:0.5, hdec:0.4, p:{
-    kick:'2000 2000 2000 2000', clap:'0000 2000 0100 2000',
-    chat:'1020 1020 1020 1120', ohat:'0002 0000 0002 0000',
-    cow:'0000 0000 0010 0000' } },
-  poly:{ w1:'square', w2:'sawtooth', det:10, cutoff:1700, envA:1100, att:0.006, rel:0.18,
-    level:0.5, dly:0.3, vrb:0.28,
-    ch:[['Gm7',[55,58,62,65]],['Cm7',[48,51,55,58]],['Eb6',[51,55,58,60]],['F9',[53,57,60,63]]],
-    pp:'..1. .... ..1. ..4.' },
-  fx:{ dt:'3/16', fb:0.4, tone:2800, size:1.9 } },
+  // 6. Homage: Rhythim Is Rhythim "Strings of Life" (1987)
+  { name:'Life in Strings', tag:'Detroit', bpm:125, swing:0.12, phat:0.5,
+    acid:{ wave:'sawtooth', root:29, cutoff:350, res:8, env:1200, dec:0.3, acc:0.5,
+      sub:0.6, drive:0.2, level:0.72, dly:0.15, vrb:0.1, tune:0,
+      nt:'0 . . .  0 . . .  7 . . .  5 . . .',
+      ac:'1000 1000 1000 1000', sl:'0000 0000 0000 0000' },
+    drums:{ level:0.9, vrb:0.22, ktune:50, kdec:0.48, hdec:0.4, p:{
+      kick:'2000 2000 2000 2000', clap:'0000 2000 0000 2000',
+      chat:'0010 0010 0010 0010', ohat:'0000 0020 0000 0000' } },
+    poly:{ w1:'sawtooth', w2:'sawtooth', det:6, cutoff:2200, envA:1400, att:0.005, rel:0.3,
+      level:0.6, dly:0.25, vrb:0.35,
+      ch:[['F',[53,60,65,69]],['G',[55,62,67,71]],['Am',[57,64,69,72]],['C',[60,64,67,72]]],
+      pp:'1.12 .2.3 .3.4 .4.4' },
+    fx:{ dt:'3/16', fb:0.4, tone:3200, size:2.6 } },
 
-{ name:'Braindance Arcade', tag:'IDM', bpm:132, swing:0.1, phat:0.5,
-  acid:{ wave:'square', root:38, cutoff:800, res:18, env:2900, dec:0.26, acc:0.7,
-    sub:0.25, drive:0.35, level:0.72, dly:0.5, vrb:0.2, tune:0,
-    nt:'0 . 3 .  10 . 7 12  . 15 . 3  0 . 14 .',
-    ac:'1001 0010 0100 1001', sl:'0010 0101 0010 0100' },
-  drums:{ level:0.88, vrb:0.3, ktune:54, kdec:0.38, hdec:0.3, p:{
-    kick:'2000 0100 0020 1000', snare:'0000 2001 0100 2000',
-    chat:'1010 0110 1001 0110', ohat:'0000 0020 0000 0000',
-    ltom:'0000 0000 0000 0110', htom:'0010 0000 0100 0000' } },
-  poly:{ w1:'triangle', w2:'sawtooth', det:13, cutoff:1300, envA:900, att:0.4, rel:1.6,
-    level:0.5, dly:0.5, vrb:0.5,
-    ch:[['Fmaj9',[53,57,60,64,67]],['Em9',[52,55,59,62,66]],['Dm9',[50,53,57,60,64]],['Cmaj7',[48,52,55,59]]],
-    pp:'1... .... .... 2...' },
-  fx:{ dt:'3/16', fb:0.58, tone:3400, size:3.2 } },
+  // 7. Homage: Cybotron "Clear" (1983)
+  { name:'Crystal Circuit', tag:'Electro', bpm:118, swing:0, phat:0.6,
+    acid:{ wave:'square', root:36, cutoff:450, res:12, env:1800, dec:0.18, acc:0.6,
+      sub:0.5, drive:0.25, level:0.78, dly:0.25, vrb:0.1, tune:0,
+      nt:'0 . 0 .  . . 3 .  0 . 0 .  10 . 7 .',
+      ac:'1010 0010 1010 1010', sl:'0000 0000 0000 0000' },
+    drums:{ level:0.93, vrb:0.18, ktune:46, kdec:0.58, hdec:0.4, p:{
+      kick:'2000 0010 2000 0010', snare:'0000 2000 0000 2000',
+      clap:'0000 0000 0000 2000', cow:'0010 0000 0010 0000',
+      chat:'1010 1010 1010 1010', ohat:'0000 0000 0000 0020' } },
+    poly:{ w1:'square', w2:'sawtooth', det:9, cutoff:1500, envA:900, att:0.005, rel:0.18,
+      level:0.4, dly:0.35, vrb:0.25,
+      ch:[['Cm',[60,63,67]],['Ab',[56,60,63]],['Bb',[58,62,65]],['Gm',[55,58,62]]],
+      pp:'1... ..2. 1... ..3.' },
+    fx:{ dt:'1/8', fb:0.4, tone:2200, size:1.6 } },
 
-{ name:'Less Is Moor', tag:'Minimal', bpm:128, swing:0.08, phat:0.45,
-  acid:{ wave:'sawtooth', root:33, cutoff:380, res:15, env:1400, dec:0.3, acc:0.5,
-    sub:0.5, drive:0.2, level:0.7, dly:0.5, vrb:0.15, tune:0,
-    nt:'0 . . .  . . 3 .  . . 0 .  . 10 . .',
-    ac:'1000 0010 0000 0100', sl:'0000 0000 0000 0100' },
-  drums:{ level:0.9, vrb:0.2, ktune:48, kdec:0.5, hdec:0.3, p:{
-    kick:'2000 2000 2000 2000', clap:'0000 2000 0000 0000',
-    chat:'0010 0010 0010 0010', cow:'0000 0001 0100 0000' } },
-  poly:{ w1:'triangle', w2:'triangle', det:8, cutoff:900, envA:400, att:0.02, rel:0.3,
-    level:0.35, dly:0.55, vrb:0.35,
-    ch:[['Am add9',[57,60,64,71]],['Em',[52,55,59]],['G',[55,59,62]],['F',[53,57,60]]],
-    pp:'.... .... 1... ....' },
-  fx:{ dt:'3/16', fb:0.55, tone:2400, size:2.8 } },
+  // 8. Homage: Afrika Bambaataa "Planet Rock" (1982)
+  { name:'Planet Shock', tag:'Electro', bpm:128, swing:0, phat:0.6,
+    acid:{ wave:'square', root:36, cutoff:460, res:12, env:1900, dec:0.2, acc:0.65,
+      sub:0.55, drive:0.3, level:0.78, dly:0.2, vrb:0.1, tune:0,
+      nt:'0 . . .  0 . 10 .  0 . . .  0 7 . .',
+      ac:'1000 1010 1000 1100', sl:'0000 0000 0000 0000' },
+    drums:{ level:0.94, vrb:0.2, ktune:45, kdec:0.6, hdec:0.42, p:{
+      kick:'2000 0010 2000 0100', snare:'0000 2000 0000 2000',
+      cow:'0010 0010 0010 0010', chat:'1010 1010 1010 1010',
+      ohat:'0000 0000 0000 0020', ltom:'0000 0000 0000 0120',
+      htom:'0000 0000 0001 0000' } },
+    poly:{ w1:'sawtooth', w2:'square', det:8, cutoff:2400, envA:1500, att:0.004, rel:0.25,
+      level:0.55, dly:0.35, vrb:0.3,
+      ch:[['C5',[72]],['Eb5',[75]],['D5',[74]],['G4',[67]]],
+      pp:'1..2 .1.. 3..1 ..4.' },
+    fx:{ dt:'1/4', fb:0.35, tone:2800, size:1.8 } },
 
-{ name:'Gate Nine', tag:'Trance', bpm:138, swing:0, phat:0.65,
-  acid:{ wave:'sawtooth', root:33, cutoff:650, res:11, env:1800, dec:0.12, acc:0.65,
-    sub:0.4, drive:0.3, level:0.8, dly:0.35, vrb:0.15, tune:0,
-    nt:'0 0 0 0  0 0 0 12  0 0 0 0  0 10 0 12',
-    ac:'1001 0010 1001 0100', sl:'0000 0000 0000 0000' },
-  drums:{ level:0.95, vrb:0.22, ktune:50, kdec:0.48, hdec:0.35, p:{
-    kick:'2000 2000 2000 2000', clap:'0000 2000 0000 2000',
-    chat:'1011 1011 1011 1011', ohat:'0020 0020 0020 0020' } },
-  poly:{ w1:'sawtooth', w2:'sawtooth', det:18, cutoff:2200, envA:1600, att:0.06, rel:0.5,
-    level:0.55, dly:0.45, vrb:0.4,
-    ch:[['Am',[57,60,64,69]],['F',[53,57,60,65]],['C',[48,52,55,60]],['G',[55,59,62,67]]],
-    pp:'1... .... 2... ....' },
-  fx:{ dt:'3/16', fb:0.5, tone:3800, size:2.6 } },
+  // 9. Homage: Mr. Fingers "Can You Feel It" (1986)
+  { name:'Deep Feeling', tag:'Deep House', bpm:120, swing:0.18, phat:0.7,
+    acid:{ wave:'sawtooth', root:33, cutoff:380, res:10, env:1400, dec:0.32, acc:0.55,
+      sub:0.7, drive:0.15, level:0.8, dly:0.2, vrb:0.15, tune:0,
+      nt:'0 . 0 0  . 0 . 7  0 . 0 0  . 5 . 3',
+      ac:'1000 0001 1000 0100', sl:'0010 0000 0010 0001' },
+    drums:{ level:0.88, vrb:0.3, ktune:49, kdec:0.52, hdec:0.42, p:{
+      kick:'2000 2000 2000 2000', clap:'0000 1000 0000 1000',
+      chat:'0010 0010 0010 0010', ohat:'0000 0020 0000 0000' } },
+    poly:{ w1:'sawtooth', w2:'square', det:10, cutoff:1300, envA:500, att:0.5, rel:2.0,
+      level:0.45, dly:0.3, vrb:0.5,
+      ch:[['Am9',[60,64,67,71]],['Fmaj9',[53,57,64,67]],['Dm9',[50,57,60,64]],['Em7',[52,59,62,67]]],
+      pp:'1... 2... 3... 4...' },
+    fx:{ dt:'3/16', fb:0.42, tone:2400, size:2.8 } },
 
-{ name:'Echo Canyon', tag:'Dub Techno', bpm:120, swing:0.1, phat:0.5,
-  acid:{ wave:'sawtooth', root:29, cutoff:260, res:6, env:700, dec:0.35, acc:0.35,
-    sub:0.8, drive:0.08, level:0.7, dly:0.25, vrb:0.15, tune:0,
-    nt:'0 . . .  . . . 0  . . 3 .  . . . .',
-    ac:'1000 0000 0010 0000', sl:'0000 0000 0000 0000' },
-  drums:{ level:0.85, vrb:0.4, ktune:45, kdec:0.6, hdec:0.35, p:{
-    kick:'2000 2000 2000 2000', chat:'0010 0010 0010 0010',
-    ohat:'0000 0000 0002 0000', snare:'0000 0000 0000 0100' } },
-  poly:{ w1:'sawtooth', w2:'square', det:12, cutoff:800, envA:500, att:0.008, rel:0.5,
-    level:0.6, dly:0.65, vrb:0.55,
-    ch:[['Am7',[57,60,64,67]],['Gm7',[55,58,62,65]],['Dm9',[50,53,57,64]],['Cm7',[48,51,55,58]]],
-    pp:'..1. .... .... ....' },
-  fx:{ dt:'3/8', fb:0.62, tone:1800, size:3.6 } },
+  // 10. Homage: A Guy Called Gerald "Voodoo Ray" (1988)
+  { name:'Voodoo Spring', tag:'Acid House', bpm:122, swing:0.2, phat:0.6,
+    acid:{ wave:'sawtooth', root:33, cutoff:560, res:20, env:2800, dec:0.2, acc:0.75,
+      sub:0.45, drive:0.35, level:0.8, dly:0.35, vrb:0.2, tune:0,
+      nt:'0 . 12 .  10 . 0 .  . 12 . 0  7 . 3 .',
+      ac:'1010 1000 0101 1010', sl:'0010 0100 0001 0010' },
+    drums:{ level:0.9, vrb:0.25, ktune:50, kdec:0.48, hdec:0.42, p:{
+      kick:'2000 2000 2000 2000', clap:'0000 2000 0000 2000',
+      chat:'1010 1011 1010 1011', ohat:'0020 0000 0020 0000' } },
+    poly:{ w1:'sawtooth', w2:'square', det:9, cutoff:1500, envA:700, att:0.02, rel:0.5,
+      level:0.3, dly:0.4, vrb:0.4,
+      ch:[['Am7',[57,60,64,67]],['Fmaj7',[53,57,60,64]],['G6',[55,59,62,64]],['Cmaj7',[60,64,67,71]]],
+      pp:'.... 1... .... 2...' },
+    fx:{ dt:'3/16', fb:0.45, tone:2600, size:2.2 } },
 
-{ name:'Iron Groove', tag:'Hardgroove', bpm:140, swing:0.06, phat:0.7,
-  acid:{ wave:'sawtooth', root:33, cutoff:520, res:14, env:2300, dec:0.1, acc:0.7,
-    sub:0.35, drive:0.5, level:0.75, dly:0.2, vrb:0.08, tune:0,
-    nt:'0 . 0 .  3 . 0 .  0 . 5 .  0 . 3 .',
-    ac:'1010 1010 1010 1010', sl:'0000 0000 0000 0000' },
-  drums:{ level:0.98, vrb:0.2, ktune:52, kdec:0.45, hdec:0.32, p:{
-    kick:'2000 2000 2000 2000', clap:'0000 2000 0000 2000',
-    chat:'1111 1112 1111 1112', ltom:'0010 0100 0010 0000',
-    htom:'0000 0001 0000 0100', cow:'0000 0000 0010 0000' } },
-  poly:{ w1:'sawtooth', w2:'square', det:6, cutoff:1400, envA:700, att:0.004, rel:0.1,
-    level:0.25, dly:0.3, vrb:0.2,
-    ch:[['Am',[57,60,64]],['Gm',[55,58,62]],['Cm',[48,51,55]],['Dm',[50,53,57]]],
-    pp:'' },
-  fx:{ dt:'1/8', fb:0.35, tone:3000, size:1.4 } },
+  // 11. Homage: 808 State "Pacific State" (1989)
+  { name:'Pacific Dawn', tag:'Balearic House', bpm:118, swing:0.15, phat:0.6,
+    acid:{ wave:'sawtooth', root:33, cutoff:420, res:12, env:1600, dec:0.28, acc:0.5,
+      sub:0.6, drive:0.2, level:0.78, dly:0.25, vrb:0.2, tune:0,
+      nt:'0 . . 0  . . 7 .  0 . . 0  . 5 . .',
+      ac:'1000 0010 1000 0100', sl:'0000 0010 0000 0000' },
+    drums:{ level:0.88, vrb:0.28, ktune:48, kdec:0.52, hdec:0.44, p:{
+      kick:'2000 2000 2000 2000', clap:'0000 2000 0000 2000',
+      chat:'0010 0010 0010 0010', ohat:'0000 0020 0000 0020' } },
+    poly:{ w1:'sawtooth', w2:'square', det:12, cutoff:1700, envA:900, att:0.04, rel:0.5,
+      level:0.55, dly:0.4, vrb:0.45,
+      ch:[['A4',[69]],['G4',[67]],['E4',[64]],['D4',[62]]],
+      pp:'1..2 3... .3.4 3...' },
+    fx:{ dt:'1/4', fb:0.4, tone:2400, size:3.0 } },
 
-{ name:'Dusty Loops', tag:'Lo-fi', bpm:92, swing:0.42, phat:0.5,
-  acid:{ wave:'sawtooth', root:31, cutoff:240, res:4, env:600, dec:0.3, acc:0.3,
-    sub:0.85, drive:0.05, level:0.72, dly:0.12, vrb:0.1, tune:0,
-    nt:'0 . . 0  . . 3 .  . 0 . .  5 . 3 .',
-    ac:'1000 0000 0100 1000', sl:'0000 0010 0000 0010' },
-  drums:{ level:0.85, vrb:0.3, ktune:46, kdec:0.55, hdec:0.45, p:{
-    kick:'2000 0010 0000 2000', snare:'0000 2000 0000 2000',
-    chat:'1010 1010 1011 1010', ohat:'0000 0000 0000 0002' } },
-  poly:{ w1:'triangle', w2:'sawtooth', det:14, cutoff:900, envA:300, att:0.5, rel:1.8,
-    level:0.6, dly:0.25, vrb:0.5,
-    ch:[['Ebmaj9',[51,55,58,62,65]],['Cm9',[48,51,55,58,62]],['Abmaj7',[44,48,51,55]],['Gm7',[43,46,50,53]]],
-    pp:'1... .... 2... ....' },
-  fx:{ dt:'1/4', fb:0.35, tone:1400, size:3.0 } },
+  // 12. Homage: Aphex Twin "Xtal" feel
+  { name:'Glass Tears', tag:'IDM', bpm:114, swing:0.08, phat:0.5,
+    acid:{ wave:'sawtooth', root:33, cutoff:400, res:10, env:1500, dec:0.35, acc:0.5,
+      sub:0.6, drive:0.1, level:0.75, dly:0.3, vrb:0.4, tune:0,
+      nt:'0 . . .  . 3 . .  -5 . . .  . -2 . .',
+      ac:'1000 0000 1000 0000', sl:'0000 0100 0000 0100' },
+    drums:{ level:0.88, vrb:0.3, ktune:48, kdec:0.5, hdec:0.32, p:{
+      kick:'2000 0010 0002 0100', snare:'0000 2001 0000 2010',
+      chat:'1011 0110 1101 0111', ohat:'0000 0000 0020 0000' } },
+    poly:{ w1:'sawtooth', w2:'sawtooth', det:18, cutoff:1100, envA:400, att:0.8, rel:2.4,
+      level:0.5, dly:0.35, vrb:0.55,
+      ch:[['Fmaj7',[53,57,60,64]],['Am7',[57,60,64,67]],['Em7',[52,55,59,62]],['Dm7',[50,53,57,60]]],
+      pp:'1... .... 2... ..4.' },
+    fx:{ dt:'3/8', fb:0.5, tone:2000, size:3.6 } },
 
-{ name:'Broken Transmission', tag:'Breakbeat', bpm:134, swing:0.14, phat:0.65,
-  acid:{ wave:'square', root:29, cutoff:340, res:9, env:1500, dec:0.22, acc:0.55,
-    sub:0.7, drive:0.25, level:0.78, dly:0.25, vrb:0.08, tune:0,
-    nt:'0 . . 12  . 0 . .  10 . 0 .  . 7 . .',
-    ac:'1000 0100 1000 0100', sl:'0001 0000 0010 0000' },
-  drums:{ level:0.95, vrb:0.25, ktune:48, kdec:0.5, hdec:0.38, p:{
-    kick:'2000 0010 0100 0010', snare:'0000 2001 0010 2000',
-    chat:'1010 1010 1010 1010', ohat:'0000 0000 0000 0020',
-    clap:'0000 0000 0001 0000' } },
-  poly:{ w1:'sawtooth', w2:'square', det:10, cutoff:1600, envA:1000, att:0.006, rel:0.2,
-    level:0.45, dly:0.4, vrb:0.3,
-    ch:[['Dm7',[50,53,57,60]],['Gm7',[43,46,50,53]],['Bbmaj7',[46,50,53,57]],['A7',[45,49,52,55]]],
-    pp:'.... ..1. .... ....' },
-  fx:{ dt:'3/16', fb:0.48, tone:2800, size:2.2 } },
+  // 13. Homage: Jeff Mills "The Bells" (1997)
+  { name:'Tower Bells', tag:'Hard Techno', bpm:140, swing:0, phat:0.6,
+    acid:{ wave:'sawtooth', root:26, cutoff:350, res:12, env:1400, dec:0.16, acc:0.7,
+      sub:0.7, drive:0.4, level:0.8, dly:0.15, vrb:0.08, tune:0,
+      nt:'0 . 0 .  0 . 0 .  0 . 0 .  0 . 0 .',
+      ac:'1000 1000 1000 1000', sl:'0000 0000 0000 0000' },
+    drums:{ level:0.96, vrb:0.15, ktune:52, kdec:0.4, hdec:0.33, p:{
+      kick:'2000 2000 2000 2000', snare:'0000 0000 0000 0002',
+      chat:'1101 1101 1101 1101', ohat:'0020 0020 0020 0020' } },
+    poly:{ w1:'sawtooth', w2:'square', det:7, cutoff:2000, envA:1200, att:0.004, rel:0.12,
+      level:0.5, dly:0.3, vrb:0.25,
+      ch:[['D5',[74]],['C5',[72]],['A4',[69]],['G4',[67]]],
+      pp:'1234 .123 4.12 34..' },
+    fx:{ dt:'1/16', fb:0.35, tone:2600, size:1.6 } },
 
-{ name:'Juke Joint', tag:'Ghetto Tech', bpm:148, swing:0.05, phat:0.7,
-  acid:{ wave:'square', root:31, cutoff:500, res:11, env:2000, dec:0.12, acc:0.65,
-    sub:0.6, drive:0.35, level:0.8, dly:0.15, vrb:0.04, tune:0,
-    nt:'0 12 . 0  12 . 0 12  . 0 12 .  0 12 . .',
-    ac:'1000 1000 0100 1000', sl:'0000 0000 0000 0000' },
-  drums:{ level:0.98, vrb:0.18, ktune:50, kdec:0.42, hdec:0.3, p:{
-    kick:'2000 0100 2000 0100', clap:'0000 2000 0000 2020',
-    chat:'1111 1111 1111 1111', ltom:'0000 0000 0010 0000',
-    cow:'0010 0000 0000 0010' } },
-  poly:{ w1:'square', w2:'square', det:5, cutoff:1500, envA:800, att:0.004, rel:0.1,
-    level:0.2, dly:0.2, vrb:0.15,
-    ch:[['Gm',[55,58,62]],['F',[53,57,60]],['Eb',[51,55,58]],['D',[50,54,57]]],
-    pp:'' },
-  fx:{ dt:'1/16', fb:0.3, tone:3200, size:1.2 } },
+  // 14. Homage: Basic Channel / Maurizio dub techno
+  { name:'Echo Chamber', tag:'Dub Techno', bpm:120, swing:0.05, phat:0.55,
+    acid:{ wave:'square', root:31, cutoff:240, res:6, env:800, dec:0.4, acc:0.4,
+      sub:0.85, drive:0.1, level:0.75, dly:0.15, vrb:0.2, tune:0,
+      nt:'0 . . .  . . . 0  . . 0 .  . . . .',
+      ac:'1000 0000 0000 0000', sl:'0000 0000 0000 0000' },
+    drums:{ level:0.86, vrb:0.35, ktune:48, kdec:0.5, hdec:0.3, p:{
+      kick:'2000 2000 2000 2000', snare:'0000 0001 0000 0000',
+      chat:'0010 0010 0010 0010' } },
+    poly:{ w1:'sawtooth', w2:'square', det:9, cutoff:900, envA:300, att:0.01, rel:0.3,
+      level:0.45, dly:0.6, vrb:0.6,
+      ch:[['Gm7',[55,58,62,65]],['Gm9',[58,62,65,69]],['Cm7',[60,63,67,70]],['F6',[53,57,60,62]]],
+      pp:'..1. ..1. ..2. ..1.' },
+    fx:{ dt:'3/8', fb:0.62, tone:1500, size:4.2 } },
 
-{ name:'Fog on Köpenicker', tag:'Berlin', bpm:126, swing:0.08, phat:0.55,
-  acid:{ wave:'sawtooth', root:31, cutoff:330, res:18, env:1200, dec:0.4, acc:0.5,
-    sub:0.55, drive:0.22, level:0.72, dly:0.35, vrb:0.25, tune:0,
-    nt:'0 . . 3  . . 0 .  . 5 . .  3 . . .',
-    ac:'1000 0010 0100 1000', sl:'0001 0000 0100 0000' },
-  drums:{ level:0.9, vrb:0.28, ktune:47, kdec:0.55, hdec:0.34, p:{
-    kick:'2000 2000 2000 2000', chat:'0020 0020 0020 0020',
-    ohat:'0000 0000 0020 0000', clap:'0000 2000 0000 2000',
-    ltom:'0000 0010 0000 0000' } },
-  poly:{ w1:'sawtooth', w2:'triangle', det:12, cutoff:700, envA:400, att:1.1, rel:2.2,
-    level:0.45, dly:0.5, vrb:0.6,
-    ch:[['Cm add9',[48,51,55,62]],['Abmaj7',[44,48,51,55]],['Gm',[43,46,50]],['Bb',[46,50,53]]],
-    pp:'1... .... .... ....' },
-  fx:{ dt:'3/8', fb:0.55, tone:2000, size:4.2 } },
+  // 15. Homage: Daft Punk "Da Funk" (1995)
+  { name:'Funk Prowler', tag:'Filter House', bpm:112, swing:0.22, phat:0.75,
+    acid:{ wave:'square', root:31, cutoff:650, res:17, env:3000, dec:0.3, acc:0.8,
+      sub:0.4, drive:0.75, level:0.82, dly:0.2, vrb:0.1, tune:0,
+      nt:'12 . 12 10  . 10 7 .  5 . 3 .  0 . 3 5',
+      ac:'1010 0100 1000 1001', sl:'0101 0110 1010 0011' },
+    drums:{ level:0.93, vrb:0.2, ktune:47, kdec:0.55, hdec:0.42, p:{
+      kick:'2000 0010 2000 0000', snare:'0000 2000 0000 2000',
+      chat:'1010 1010 1010 1011', ohat:'0000 0000 0020 0000' } },
+    poly:{ w1:'square', w2:'sawtooth', det:8, cutoff:1200, envA:600, att:0.01, rel:0.2,
+      level:0.3, dly:0.25, vrb:0.2,
+      ch:[['Gm',[55,58,62]],['Bb',[58,62,65]],['F',[53,57,60]],['Gm7',[55,58,62,65]]],
+      pp:'.... .... .... ..1.' },
+    fx:{ dt:'3/16', fb:0.4, tone:2200, size:1.6 } },
 
-{ name:'Redline 303', tag:'303 Overdrive', bpm:145, swing:0.03, phat:0.85,
-  acid:{ wave:'sawtooth', root:33, cutoff:560, res:26, env:5200, dec:0.19, acc:0.9,
-    sub:0.25, drive:0.9, level:0.85, dly:0.28, vrb:0.12, tune:0,
-    nt:'0 12 0 15  12 0 3 12  0 17 0 12  10 0 12 15',
-    ac:'1010 0110 1010 0101', sl:'0101 0010 0100 1010' },
-  drums:{ level:0.95, vrb:0.15, ktune:53, kdec:0.4, hdec:0.3, p:{
-    kick:'2000 2000 2000 2000', snare:'0000 2000 0000 2000',
-    chat:'1111 1111 1111 1111', ohat:'0020 0020 0020 0020' } },
-  poly:{ w1:'sawtooth', w2:'square', det:8, cutoff:1500, envA:800, att:0.005, rel:0.15,
-    level:0.2, dly:0.3, vrb:0.2,
-    ch:[['Am',[57,60,64]],['G',[55,59,62]],['F',[53,57,60]],['E7',[52,56,59,62]]],
-    pp:'' },
-  fx:{ dt:'1/8', fb:0.4, tone:3400, size:1.6 } },
+  // 16. Homage: DJ Deeon ghetto/juke
+  { name:'Werk It', tag:'Ghetto Tech', bpm:150, swing:0.06, phat:0.65,
+    acid:{ wave:'square', root:36, cutoff:500, res:12, env:2000, dec:0.14, acc:0.75,
+      sub:0.6, drive:0.45, level:0.8, dly:0.15, vrb:0.08, tune:0,
+      nt:'0 . . 0  . 0 . .  0 . 0 .  . 12 . 0',
+      ac:'1001 0100 1010 0101', sl:'0000 0000 0000 0100' },
+    drums:{ level:0.95, vrb:0.15, ktune:50, kdec:0.46, hdec:0.36, p:{
+      kick:'2000 0020 2000 0020', clap:'0000 2000 0110 2000',
+      cow:'0010 0000 0010 0010', chat:'1010 1101 1010 1101' } },
+    poly:{ w1:'square', w2:'sawtooth', det:8, cutoff:1600, envA:1000, att:0.004, rel:0.1,
+      level:0.4, dly:0.2, vrb:0.15,
+      ch:[['C5',[72]],['Eb5',[75]],['G4',[67]],['Bb4',[70]]],
+      pp:'..1. .2.. ..1. 3..4' },
+    fx:{ dt:'1/16', fb:0.32, tone:2600, size:1.3 } },
 
-{ name:'Midnight Drive', tag:'Synthwave', bpm:104, swing:0.1, phat:0.6,
-  acid:{ wave:'sawtooth', root:33, cutoff:420, res:8, env:1300, dec:0.2, acc:0.5,
-    sub:0.7, drive:0.15, level:0.72, dly:0.2, vrb:0.1, tune:0,
-    nt:'0 . 0 .  12 . 0 .  0 . 0 .  10 . 12 .',
-    ac:'1000 1000 1000 1000', sl:'0000 0000 0000 0000' },
-  drums:{ level:0.9, vrb:0.32, ktune:47, kdec:0.6, hdec:0.4, p:{
-    kick:'2000 0000 2000 0010', snare:'0000 2000 0000 2000',
-    chat:'1010 1010 1010 1010', htom:'0000 0000 0000 0100' } },
-  poly:{ w1:'sawtooth', w2:'sawtooth', det:16, cutoff:1900, envA:1100, att:0.01, rel:0.3,
-    level:0.6, dly:0.4, vrb:0.45,
-    ch:[['Am',[57,60,64,69]],['F',[53,57,60,65]],['G',[55,59,62,67]],['Em',[52,55,59,64]]],
-    pp:'1.1. 1.1. 2.2. 3.3.' },
-  fx:{ dt:'1/4', fb:0.42, tone:2600, size:2.8 } }
+  // 17. Homage: Underworld "Rez" (1993)
+  { name:'Rezonate', tag:'Trance', bpm:138, swing:0, phat:0.65,
+    acid:{ wave:'sawtooth', root:33, cutoff:620, res:18, env:3400, dec:0.17, acc:0.7,
+      sub:0.4, drive:0.4, level:0.8, dly:0.3, vrb:0.15, tune:0,
+      nt:'0 3 7 12  0 3 7 12  0 5 8 12  0 5 8 15',
+      ac:'1000 1000 1000 1000', sl:'0001 0000 0001 0000' },
+    drums:{ level:0.94, vrb:0.2, ktune:50, kdec:0.44, hdec:0.38, p:{
+      kick:'2000 2000 2000 2000', clap:'0000 2000 0000 2000',
+      chat:'1101 1101 1101 1101', ohat:'0020 0020 0020 0020' } },
+    poly:{ w1:'sawtooth', w2:'sawtooth', det:14, cutoff:1500, envA:800, att:0.005, rel:0.12,
+      level:0.45, dly:0.3, vrb:0.35,
+      ch:[['Am',[57,64,69,72]],['F',[53,60,65,69]],['C',[55,60,64,72]],['G',[55,62,67,71]]],
+      pp:'1.1. 1.1. 2.2. 3.3.' },
+    fx:{ dt:'1/8', fb:0.48, tone:3000, size:2.4 } },
+
+  // 18. 303 Overdrive showcase
+  { name:'Maximum Squelch', tag:'303 Overdrive', bpm:145, swing:0.02, phat:0.85,
+    acid:{ wave:'sawtooth', root:33, cutoff:750, res:27, env:5200, dec:0.24, acc:0.95,
+      sub:0.5, drive:0.9, level:0.8, dly:0.3, vrb:0.12, tune:0,
+      nt:'0 0 12 3  0 12 0 15  0 -12 12 0  10 3 12 0',
+      ac:'1010 0101 1010 0110', sl:'0110 1010 0101 1010' },
+    drums:{ level:0.95, vrb:0.15, ktune:51, kdec:0.42, hdec:0.36, p:{
+      kick:'2000 2000 2000 2000', clap:'0000 2000 0000 2000',
+      chat:'1110 1111 1110 1111', ohat:'0002 0000 0002 0000' } },
+    poly:{ w1:'sawtooth', w2:'square', det:9, cutoff:1400, envA:800, att:0.006, rel:0.2,
+      level:0.2, dly:0.3, vrb:0.25,
+      ch:[['Am',[57,60,64]],['G',[55,59,62]],['F',[53,57,60]],['Em',[52,55,59]]],
+      pp:'.... .... .... ....' },
+    fx:{ dt:'3/16', fb:0.45, tone:3200, size:1.8 } }
 ];
 
 /* apply a preset object to state (audio-independent) */

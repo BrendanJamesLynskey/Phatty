@@ -1,8 +1,8 @@
-# Groovebox — Acid · Drums · Poly · FX
+# Phatty — Acid · Drums · Poly · FX
 
-A phat little browser DAW built with the Web Audio API. It combines a classic **TB-303-style acid synth**, a fully-synthesized **808/909-style drum machine**, a fat **subtractive poly synth**, and a rack of **effects** — all on one screen, all synthesized live (no samples). Load a preset, hit play, and twist a knob. The emphasis is squarely on satisfaction and fun.
+**Phatty** is a phat little browser DAW built with the Web Audio API. It combines a classic **TB-303-style acid synth**, a fully-synthesized **808/909-style drum machine**, a fat **subtractive poly synth**, and a rack of **effects** — all on one screen, all synthesized live (no samples). Load a preset, hit play, and twist a knob. The emphasis is squarely on satisfaction and fun, and the 18 presets are affectionate homages to classic tracks.
 
-**[Launch Groovebox](https://brendanjameslynskey.github.io/Groovebox/)**
+**[Launch Phatty](https://brendanjameslynskey.github.io/Phatty/)**
 
 ---
 
@@ -13,7 +13,7 @@ A phat little browser DAW built with the Web Audio API. It combines a classic **
 - **Poly synth** — 5-voice subtractive synth with dual detuned oscillators, stereo spread, and independent filter + amp ADSR. A 16-step chord sequencer runs chord stabs, basslines and pads.
 - **Phat master bus** — warm low shelf → tape-style saturation → glue compressor → brickwall limiter, with a single **PHAT** macro that drives drive, sub weight and squeeze together.
 - **Effects** — tempo-synced ping-pong delay send and a decaying-noise convolution reverb send, both fed from every instrument.
-- **17 groove presets** — instantly-satisfying jams spanning genres (see below), plus a **Randomize** button that generates fresh, scale-constrained patterns that always sound musical.
+- **18 groove presets based on classics** — each an affectionate, in-the-style-of homage to a defining electronic track (see below), plus a **Randomize** button that generates fresh, scale-constrained patterns that always sound musical.
 - **Rock-solid transport** — lookahead scheduler (the classic 25 ms / 100 ms "two clocks" pattern) for tight timing, swing, adjustable pattern length (8/12/16), A/B pattern slots with chaining and copy, a glowing playhead synced to the audio, and an analyser-driven VU meter.
 - **Custom knobs** — pointer-draggable (mouse and touch), double-tap to reset, mouse-wheel support, with a live value readout.
 - **Desktop & mobile** — a responsive layout that auto-detects your device and reflows to a single scrollable column with larger touch targets on phones. Press **Space** to play/stop on desktop.
@@ -29,16 +29,39 @@ Or simply open `index.html` in any modern browser — the landing page detects y
 
 Best experienced with headphones. 🎧
 
-## Presets
+## Presets — homages to the classics
 
-**Warehouse Alley** (Acid House) · **Motor City** (Detroit Techno) · **Planet Rock'd** (Electro) · **Deep End** (Deep House) · **Squelch Factory** (Acid Techno) · **Jack Move** (Jackin' House) · **Braindance Arcade** (IDM) · **Less Is Moor** (Minimal) · **Gate Nine** (Trance) · **Echo Canyon** (Dub Techno) · **Iron Groove** (Hardgroove) · **Dusty Loops** (Lo-fi) · **Broken Transmission** (Breakbeat) · **Juke Joint** (Ghetto Tech) · **Fog on Köpenicker** (Berlin) · **Redline 303** (303 Overdrive) · **Midnight Drive** (Synthwave)
+Each of the 18 presets recreates the *feel* of a landmark electronic track in Phatty's own voice — the signature bassline, drum groove or chord hook, programmed in-the-style-of rather than transcribed. Load one, hit play, and you're in the ballpark of the original in a couple of bars.
+
+| # | Preset | Genre | Inspired by |
+|---|--------|-------|-------------|
+| 1 | Warehouse Squelch | Acid House | Phuture — *Acid Tracks* (1987) |
+| 2 | Higher Scream | Acid Techno | Josh Wink — *Higher State of Consciousness* (1995) |
+| 3 | Bounce Experience | Acid Trance | Hardfloor — *Acperience 1* (1992) |
+| 4 | Drum Delirium | Minimal | Plastikman — *Spastik* (1993) |
+| 5 | Night Flight | Detroit Techno | Model 500 — *No UFO's* (1985) |
+| 6 | Life in Strings | Detroit | Rhythim Is Rhythim — *Strings of Life* (1987) |
+| 7 | Crystal Circuit | Electro | Cybotron — *Clear* (1983) |
+| 8 | Planet Shock | Electro | Afrika Bambaataa — *Planet Rock* (1982) |
+| 9 | Deep Feeling | Deep House | Mr. Fingers — *Can You Feel It* (1986) |
+| 10 | Voodoo Spring | Acid House | A Guy Called Gerald — *Voodoo Ray* (1988) |
+| 11 | Pacific Dawn | Balearic House | 808 State — *Pacific State* (1989) |
+| 12 | Glass Tears | IDM | Aphex Twin — *Xtal* (1992) |
+| 13 | Tower Bells | Hard Techno | Jeff Mills — *The Bells* (1997) |
+| 14 | Echo Chamber | Dub Techno | Basic Channel / Maurizio |
+| 15 | Funk Prowler | Filter House | Daft Punk — *Da Funk* (1995) |
+| 16 | Werk It | Ghetto Tech | DJ Deeon — Chicago juke/ghetto |
+| 17 | Rezonate | Trance | Underworld — *Rez* (1993) |
+| 18 | Maximum Squelch | 303 Overdrive | full-squelch showcase |
+
+Tempos span 112–150 BPM across a range of keys. These are original patterns paying tribute to the tracks that defined each style — no audio or MIDI is copied from the originals.
 
 ## Files
 
 | File | Description |
 |------|-------------|
 | `index.html` | Landing page with device auto-detection |
-| `app.html` | The groovebox — a single self-contained Web Audio app (responsive; desktop & mobile) |
+| `app.html` | Phatty itself — a single self-contained Web Audio app (responsive; desktop & mobile) |
 | `.github/workflows/pages.yml` | GitHub Pages deployment workflow |
 
 ## Controls
