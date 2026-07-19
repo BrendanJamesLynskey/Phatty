@@ -43,8 +43,14 @@ Every preset transcribes a classic's **signature riff step-for-step** into the m
 | 5 | I Feel Love | Giorgio Moroder / Donna Summer — the pulsing octave bass (1977) | 2 bars |
 | 6 | Tetris (Korobeiniki) | traditional — the *Korobeiniki* A-theme (public domain) | 2 bars |
 | 7 | Hall of the Mountain King | Edvard Grieg — the creeping theme (public domain) | 4 bars |
+| 8 | Enola Gay | OMD — the piercing lead riff (1980) | 2 bars |
+| 9 | Just Can't Get Enough | Depeche Mode — the bright Jupiter-4 hook (1981) | 2 bars |
+| 10 | Cars | Gary Numan — the Polymoog riff (1979) | 2 bars |
+| 11 | Tainted Love | Soft Cell — the driving synth-bass hook (1981) | 2 bars |
+| 12 | Don't You Want Me | The Human League — the intro synth riff (1981) | 2 bars |
+| 13 | Don't Go | Yazoo — Vince Clarke's Pro-One bassline (1982) | 2 bars |
 
-Only the melody line of each riff is reproduced — rendered in Phatty's own synth voice as a tribute. The two public-domain pieces (Tetris/*Korobeiniki* and Grieg) are reproduced in full over multiple bars.
+A batch of early-'80s synth-pop classics rounds out the set. Only the melody line of each riff is reproduced — rendered in Phatty's own synth voice as a tribute. The two public-domain pieces (Tetris/*Korobeiniki* and Grieg) are reproduced in full over multiple bars.
 
 ## Files
 
