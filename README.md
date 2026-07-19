@@ -8,13 +8,14 @@
 
 ## Features
 
-- **ACID-303** — monophonic acid voice: switchable saw/square oscillator with a sub octave, a resonant low-pass filter driven by an exponential filter envelope, **accent** (boosts brightness + level + snap) and true legato **slides** (pitch glides between steps), plus a per-voice overdrive for that squelchy growl. Per-step note, accent and slide editing on a 16-step lane.
+- **ACID-303** — monophonic acid voice: switchable saw/square oscillator with a sub octave, a resonant low-pass filter driven by an exponential filter envelope, **accent** (boosts brightness + level + snap) and true legato **slides** (pitch glides between steps), plus a per-voice overdrive for that squelchy growl. Per-step note, accent and slide editing on a lane of up to 64 steps (4 bars).
 - **Drum machine** — 8 hand-tuned synthesized voices: kick (pitch-drop + click), snare, 4-burst clap, metallic closed/open hats (with hi-hat choke), two toms and a cowbell. Per-lane **mute/solo** and per-step accent.
 - **Poly synth** — 5-voice subtractive synth with dual detuned oscillators, stereo spread, and independent filter + amp ADSR. A 16-step chord sequencer runs chord stabs, basslines and pads.
 - **Phat master bus** — warm low shelf → tape-style saturation → glue compressor → brickwall limiter, with a single **PHAT** macro that drives drive, sub weight and squeeze together.
 - **Effects** — tempo-synced ping-pong delay send and a decaying-noise convolution reverb send, both fed from every instrument. The sends are **high-passed** so low bass and kick energy never recirculate into the delay feedback or the reverb tail — the repeats stay clean instead of building into a boomy wash.
-- **23 presets** — 20 in-the-style-of homages to the best-known electronic records ever made, plus **3 note-accurate reproductions** that transcribe a classic's signature riff step-for-step into the acid lead (see below), plus a **Randomize** button that generates fresh, scale-constrained patterns that always sound musical.
-- **Rock-solid transport** — lookahead scheduler (the classic 25 ms / 100 ms "two clocks" pattern) for tight timing, swing, adjustable pattern length (8/12/16), A/B pattern slots with chaining and copy, a glowing playhead synced to the audio, and an analyser-driven VU meter.
+- **7 note-accurate reproductions** — each transcribes a classic's signature riff step-for-step into the mono acid lead (which has per-step pitch), voiced as a clean, low-resonance synth. Several span multiple bars (see below). Plus a **Randomize** button that generates fresh, scale-constrained patterns that always sound musical.
+- **Extended sequencer for longer tunes** — patterns up to **64 steps / 4 bars**, selectable at 8 / 12 / 16 / 32 / 48 / 64 steps, with bar separators, an auto-scrolling grid that follows the playhead on long patterns, plus swing, A/B pattern slots with chaining, and copy.
+- **Rock-solid transport** — lookahead scheduler (the classic 25 ms / 100 ms "two clocks" pattern) for tight timing, a glowing playhead synced to the audio, and an analyser-driven VU meter.
 - **Custom knobs** — pointer-draggable (mouse and touch), double-tap to reset, mouse-wheel support, with a live value readout.
 - **Desktop & mobile** — a responsive layout that auto-detects your device and reflows to a single scrollable column with larger touch targets on phones. Press **Space** to play/stop on desktop.
 
@@ -29,46 +30,21 @@ Or simply open `index.html` in any modern browser — the landing page detects y
 
 Best experienced with headphones. 🎧
 
-## Presets — homages to famous tracks
+## Presets — note-accurate reproductions
 
-Each of the 20 presets recreates the *feel* of one of the best-known electronic tracks ever made — its signature bassline, drum groove or melodic hook, programmed in Phatty's own voice rather than transcribed. Load one, hit play, and you're in the ballpark of the original in a couple of bars. They span downtempo trip-hop to big beat, trance and filter house (78–138 BPM).
+Every preset transcribes a classic's **signature riff step-for-step** into the mono acid lead (which has per-step pitch control), voiced as a clean, low-resonance synth. Several use the extended sequencer to run over multiple bars so the riff and its chord progression develop like the real record.
 
-| # | Preset | Genre | Inspired by |
-|---|--------|-------|-------------|
-| 1 | Globe Trotter | Filter House | Daft Punk — *Around the World* (1997) |
-| 2 | Lucky Nights | Disco House | Daft Punk — *Get Lucky* (2013) |
-| 3 | Funk Growler | Filter House | Daft Punk — *Da Funk* (1995) |
-| 4 | Vienna Smoke | Downtempo | Kruder & Dorfmeister (*K&D Sessions*) |
-| 5 | Heartbeat Hymn | Trip-Hop | Massive Attack — *Teardrop* (1998) |
-| 6 | Velvet Noir | Trip-Hop | Portishead — *Glory Box* (1994) |
-| 7 | Sunshine Bag | Downtempo | Gorillaz — *Clint Eastwood* (2001) |
-| 8 | Block Rocker | Big Beat | The Chemical Brothers — *Block Rockin' Beats* (1997) |
-| 9 | Spark Punk | Big Beat | The Prodigy — *Firestarter* (1996) |
-| 10 | Right About Now | Big Beat | Fatboy Slim — *Right Here, Right Now* (1998) |
-| 11 | Slippy Lager | Techno Anthem | Underworld — *Born Slippy .NUXX* (1996) |
-| 12 | Sleepless City | Trance | Faithless — *Insomnia* (1995) |
-| 13 | Dreamland Keys | Dream Trance | Robert Miles — *Children* (1995) |
-| 14 | Dust Devil | Trance | Darude — *Sandstorm* (1999) |
-| 15 | Good Feeling | EDM House | Avicii — *Levels* (2011) |
-| 16 | Slow Strobe | Progressive House | deadmau5 — *Strobe* (2009) |
-| 17 | Cold Monday | Synth / EBM | New Order — *Blue Monday* (1983) |
-| 18 | Neon Pulse | Electronic Disco | Giorgio Moroder / Donna Summer — *I Feel Love* (1977) |
-| 19 | Automaton | Electro | Kraftwerk — *The Robots* (1978) |
-| 20 | Squelch State | Acid Techno | Josh Wink — *Higher State of Consciousness* (1995) |
+| # | Preset | Reproduces | Length |
+|---|--------|-----------|--------|
+| 1 | Take On Me | a-ha — the Juno intro riff (1985) | 3 bars |
+| 2 | Popcorn | Hot Butter / Gershon Kingsley — the Moog melody (1972) | 2 bars |
+| 3 | Axel F | Harold Faltermeyer — the *Beverly Hills Cop* theme (1984) | 2 bars |
+| 4 | Sandstorm | Darude — the trance lead riff (1999) | 2 bars |
+| 5 | I Feel Love | Giorgio Moroder / Donna Summer — the pulsing octave bass (1977) | 2 bars |
+| 6 | Tetris (Korobeiniki) | traditional — the *Korobeiniki* A-theme (public domain) | 2 bars |
+| 7 | Hall of the Mountain King | Edvard Grieg — the creeping theme (public domain) | 4 bars |
 
-These are original patterns paying tribute to the tracks that defined each style — no audio or MIDI is copied from the originals.
-
-### Exact-riff reproductions
-
-Three further presets go a step further and transcribe a classic's **signature riff note-for-note** into the mono acid lane (which has per-step pitch), voiced as a bright, low-resonance lead:
-
-| # | Preset | Riff reproduced |
-|---|--------|-----------------|
-| 21 | Take On Me | a-ha — the Juno intro riff (1985) |
-| 22 | Popcorn | Hot Butter / Gershon Kingsley — the Moog melody (1972) |
-| 23 | Axel F | Harold Faltermeyer — the *Beverly Hills Cop* theme (1984) |
-
-The synth voice is Phatty's own — only the melody line is reproduced, as a tribute.
+Only the melody line of each riff is reproduced — rendered in Phatty's own synth voice as a tribute. The two public-domain pieces (Tetris/*Korobeiniki* and Grieg) are reproduced in full over multiple bars.
 
 ## Files
 
