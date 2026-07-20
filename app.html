@@ -33,6 +33,9 @@
   --lead:#7cd0ff;
   --poly2:#8b6cf0;
   --red:#f4645f;
+  --stripe:linear-gradient(90deg,var(--acid) 0 25%,var(--lead) 25% 50%,var(--drum) 50% 75%,var(--poly) 75% 100%);
+  --lcd-bg:#0c0903;
+  --lcd-amber:#ffc95e;
 }
 html,body{height:100%}
 body{
@@ -47,6 +50,11 @@ body{
   -webkit-user-select:none;
 }
 ::selection{background:var(--amber-dim)}
+/* faint dot texture — matches the landing page for cross-page cohesion */
+body::after{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg width='4' height='4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='rgba(200,155,60,0.04)'/%3E%3C/svg%3E");
+}
 
 /* ---------- power-on overlay ---------- */
 #overlay{
@@ -64,8 +72,15 @@ body{
   animation:pulse 2.2s ease-in-out infinite;
 }
 @keyframes pulse{0%,100%{transform:scale(1);box-shadow:0 0 30px rgba(232,168,56,.25),inset 0 0 20px rgba(232,168,56,.1)}50%{transform:scale(1.06);box-shadow:0 0 60px rgba(232,168,56,.5),inset 0 0 30px rgba(232,168,56,.2)}}
-#overlay h1{font-weight:200;font-size:26px;letter-spacing:.4em;color:var(--amber);text-indent:.4em}
+#overlay .ov-brand{
+  display:flex;flex-direction:column;gap:6px;align-items:stretch;
+  font-weight:600;font-size:44px;letter-spacing:.3em;text-indent:.3em;
+  color:var(--amber);text-shadow:0 0 30px rgba(232,168,56,.5);
+}
+#overlay .ov-brand .brand-stripe{height:4px;border-radius:2px;background:var(--stripe)}
+#overlay h1{font-weight:200;font-size:14px;letter-spacing:.4em;color:var(--txt);text-indent:.4em;margin-top:6px}
 #overlay p{font-size:12px;color:var(--txt-dim);letter-spacing:.15em}
+@media (max-width:480px){ #overlay .ov-brand{font-size:32px} }
 
 /* ---------- transport ---------- */
 #transport{
@@ -75,9 +90,16 @@ body{
   background:rgba(12,12,22,.92);backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
 }
-.brand{display:flex;flex-direction:column;line-height:1.1;margin-right:4px}
-.brand b{font-weight:600;font-size:15px;letter-spacing:.18em;color:var(--amber)}
-.brand span{font-size:8.5px;letter-spacing:.3em;color:var(--txt-dim)}
+.brand{display:flex;flex-direction:column;line-height:1.1;margin-right:4px;gap:3px}
+.brand b{
+  font-weight:600;font-size:16px;letter-spacing:.18em;color:var(--amber);
+  text-shadow:0 0 12px rgba(232,168,56,.45);
+}
+.brand-stripe{
+  display:block;height:3px;width:100%;border-radius:2px;
+  background:var(--stripe);opacity:.85;
+}
+.brand span:not(.brand-stripe){font-size:8.5px;letter-spacing:.3em;color:var(--txt-dim)}
 #playBtn{
   width:52px;height:52px;border-radius:50%;
   border:1.5px solid var(--amber);background:rgba(232,168,56,.06);
@@ -120,6 +142,42 @@ select:focus{border-color:var(--amber2)}
   transition:none}
 #vuPeak{position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.75);left:0;opacity:0}
 
+/* ---------- now-playing LCD strip ---------- */
+#nowPlaying{
+  flex-basis:100%;display:flex;align-items:center;gap:10px;
+  padding:5px 12px;border-radius:7px;
+  background:linear-gradient(180deg,#080602,var(--lcd-bg));
+  border:1px solid #2a2214;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.7), inset 0 0 24px rgba(232,168,56,.05);
+  overflow:hidden;white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+#nowPlaying .np-led{
+  width:6px;height:6px;border-radius:50%;flex-shrink:0;
+  background:var(--amber);box-shadow:0 0 6px var(--amber);
+  animation:npBlink 2s ease-in-out infinite;
+}
+@keyframes npBlink{0%,100%{opacity:1}50%{opacity:.35}}
+#nowPlaying .np-label{
+  font-size:8px;letter-spacing:.28em;color:rgba(232,168,56,.55);flex-shrink:0;
+}
+#nowPlaying .np-track{
+  font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--lcd-amber);
+  text-shadow:0 0 8px rgba(255,201,94,.55);
+  overflow:hidden;text-overflow:ellipsis;min-width:0;
+}
+#nowPlaying .np-credit{
+  margin-left:auto;flex-shrink:0;
+  font-size:10px;font-weight:300;letter-spacing:.12em;color:var(--txt-dim);
+}
+#nowPlaying .np-credit b{color:var(--txt);font-weight:400}
+#nowPlaying.flash .np-track{animation:npFlash .45s ease-out}
+@keyframes npFlash{0%{opacity:0;filter:brightness(2)}100%{opacity:1}}
+@media (max-width:480px){
+  #nowPlaying .np-label{display:none}
+  #nowPlaying .np-track{font-size:11px}
+}
+
 /* ---------- knobs ---------- */
 .knob{display:flex;flex-direction:column;align-items:center;gap:1px;width:56px;flex-shrink:0}
 .knob.big{width:68px}
@@ -130,7 +188,9 @@ select:focus{border-color:var(--amber2)}
 .knob svg .track{stroke:#252540;stroke-width:3.5;fill:none;stroke-linecap:round}
 .knob svg .val{stroke-width:3.5;fill:none;stroke-linecap:round;filter:drop-shadow(0 0 3px currentColor)}
 .knob svg .ind{stroke:#e9e5da;stroke-width:2;stroke-linecap:round}
-.knob svg .cap{fill:#191928;stroke:#2e2e4c;stroke-width:1}
+.knob svg .cap{fill:#1a1a2c;stroke:#34345a;stroke-width:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.7))}
+.knob svg:hover .ind, .knob svg:active .ind{stroke:#fff}
+.knob:hover .klabel{color:var(--txt)}
 .knobrow{display:flex;flex-wrap:wrap;gap:6px 4px;align-items:flex-start}
 
 /* ---------- panels ---------- */
@@ -139,17 +199,30 @@ main{padding:14px 16px 60px;display:flex;flex-direction:column;gap:14px;max-widt
   background:linear-gradient(180deg,var(--panel),#0d0d17);
   border:1px solid var(--line);border-radius:14px;
   padding:14px 16px 16px;
+  position:relative;overflow:hidden;
 }
+.panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:currentColor;opacity:.55;
+}
+.panel.p-acid::before{color:var(--acid)}
+.panel.p-lead::before{color:var(--lead)}
+.panel.p-drum::before{color:var(--drum)}
+.panel.p-poly::before{color:var(--poly)}
+.panel.p-fx::before{color:var(--amber)}
 .phead{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
 .ptitle{font-weight:600;font-size:12px;letter-spacing:.22em;display:flex;align-items:center;gap:8px}
-.ptitle .dot{width:8px;height:8px;border-radius:50%;box-shadow:0 0 8px currentColor}
+.ptitle .dot{width:8px;height:8px;border-radius:50%;box-shadow:0 0 8px currentColor;
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.8),currentColor 45%)}
+body.playing .ptitle .dot{animation:ledPulse 1s ease-in-out infinite}
+@keyframes ledPulse{0%,100%{box-shadow:0 0 8px currentColor}50%{box-shadow:0 0 16px currentColor,0 0 3px currentColor}}
 .panel.p-acid .ptitle{color:var(--acid)}
 .panel.p-drum .ptitle{color:var(--drum)}
 .panel.p-poly .ptitle{color:var(--poly)}
 .panel.p-lead .ptitle{color:var(--lead)}
 .leadKnobs .val{color:var(--lead)}
 .panel.p-fx .ptitle{color:var(--amber)}
-.ptitle .dot{background:currentColor;color:inherit}
+.ptitle .dot{background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.85),currentColor 45%);color:inherit}
 .psub{font-size:9px;color:var(--txt-dim);letter-spacing:.15em}
 .pspacer{flex:1}
 .row2{display:grid;grid-template-columns:1.35fr 1fr;gap:14px}
@@ -238,10 +311,10 @@ main{padding:14px 16px 60px;display:flex;flex-direction:column;gap:14px;max-widt
 
 /* playhead */
 .pad.ph, .apad.ph{
-  border-color:#ffe9c2 !important;
-  box-shadow:0 0 14px 2px rgba(255,220,150,.55), inset 0 0 6px rgba(255,235,190,.35) !important;
+  border-color:#ffd98f !important;
+  box-shadow:0 0 14px 2px rgba(232,168,56,.6), inset 0 0 6px rgba(255,214,140,.4) !important;
 }
-.pad.ph:not(.on){background:#26263a}
+.pad.ph:not(.on){background:#2b2438}
 
 /* ---------- fx panel ---------- */
 .fxrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
@@ -285,12 +358,13 @@ main{padding:14px 16px 60px;display:flex;flex-direction:column;gap:14px;max-widt
 
 <div id="overlay">
   <div class="pwr">&#9211;</div>
+  <div class="ov-brand">PHATTY<span class="brand-stripe"></span></div>
   <h1>TAP TO POWER ON</h1>
-  <p>PHATTY &middot; ANALOG-STYLE ACID GROOVEBOX &middot; 303 + DRUMS + POLY</p>
+  <p>ANALOG-STYLE ACID GROOVEBOX &middot; 303 + DRUMS + POLY</p>
 </div>
 
 <header id="transport">
-  <div class="brand"><b>PHATTY</b><span>ACID GROOVEBOX</span></div>
+  <div class="brand"><b>PHATTY</b><span class="brand-stripe"></span><span>ACID GROOVEBOX</span></div>
   <button id="playBtn" title="Play/Stop (Space)">&#9654;</button>
   <div class="tgroup" id="tknobs"></div>
   <div class="tsep"></div>
@@ -323,6 +397,12 @@ main{padding:14px 16px 60px;display:flex;flex-direction:column;gap:14px;max-widt
       <option value="128">128 · 8 BARS</option>
     </select>
     <button class="btn sq" id="helpBtn" title="Help">?</button>
+  </div>
+  <div id="nowPlaying" aria-live="polite">
+    <span class="np-led"></span>
+    <span class="np-label">NOW&nbsp;PLAYING</span>
+    <span class="np-track" id="npTrack">&mdash;</span>
+    <span class="np-credit" id="npCredit"></span>
   </div>
 </header>
 
@@ -492,19 +572,19 @@ function emptyPats(){
    PRESETS — 17 full grooves. Each sets everything.
    ============================================================ */
 const PRESETS = [
-  {"name":"Take On Me","tag":"a-ha · riff","bpm":85,"swing":0,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":520,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.4,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.14,"vrb":0.06,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"square","cutoff":2200,"res":3,"env":50,"dec":0.2,"acc":0.5,"gate":0.3,"sub":0,"drive":0.05,"level":0.95,"dly":0.16,"vrb":0.12,"tune":0,"root":66,"nt":"0 0 0 -2 3 3 2 3 -2 0 -2 . . . . . 0 0 0 -2 3 3 2 3 -2 0 -2 . . . . . 0 0 0 -2 3 3 2 3 -2 0 -2 . . . . . 0 0 0 -2 3 3 2 3 -2 0 -2 . . . . .","ac":"1000100010000000100010001000000010001000100000001000100010000000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.14,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000000020000000200000002000000020000000200000002000000020000000","snare":"0000200000002000000020000000200000002000000020000000200000002000","chat":"1010101010101010101010101010101010101010101010101010101010101010"}},"poly":{"w1":"square","w2":"sawtooth","det":8,"cutoff":1500,"envA":0,"att":0.02,"rel":0.4,"level":0.16,"dly":0.12,"vrb":0.16,"ch":[["A",[57,61,64]],["D",[50,54,57]],["E",[52,56,59]],["F#m",[54,57,61]]],"pp":"1111111111111111222222222222222233333333333333331111111111111111"},"fx":{"dt":"1/8","fb":0.28,"tone":3200,"size":1.6}},
-  {"name":"Popcorn","tag":"Hot Butter · riff","bpm":130,"swing":0,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":520,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.32,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.1,"vrb":0.04,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"square","cutoff":1900,"res":3,"env":50,"dec":0.1,"acc":0.5,"gate":0.28,"sub":0,"drive":0.05,"level":0.95,"dly":0.14,"vrb":0.06,"tune":0,"root":57,"nt":"0 . -2 . 0 . -5 . 3 . -5 . 12 . . . 0 . 2 . 15 . 2 . 15 . 0 . 2 . . . 0 . -2 . 0 . -5 . 3 . -5 . 12 . . . 0 . 2 . 15 . 2 . 15 . 0 . 2 . . .","ac":"1010101010100000101010101010000010101010101000001010101010100000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.14,"ktune":47,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000200020002000200020002000200020002000200020002000200020002000","clap":"0000200000002000000020000000200000002000000020000000200000002000","chat":"0010001000100010001000100010001000100010001000100010001000100010"}},"poly":{"w1":"square","w2":"square","det":6,"cutoff":1300,"envA":0,"att":0.01,"rel":0.25,"level":0.16,"dly":0.1,"vrb":0.08,"ch":[["Am",[57,60,64]],["Dm",[50,53,57]],["Em",[52,55,59]],["Am",[57,60,64]]],"pp":"1111111111111111222222222222222233333333333333334444444444444444"},"fx":{"dt":"1/16","fb":0.25,"tone":3200,"size":1.4}},
-  {"name":"Axel F","tag":"Beverly Hills Cop · riff","bpm":118,"swing":0.06,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":560,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.32,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.12,"vrb":0.05,"tune":0,"root":29,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 8 _ 8 _ 8 _ 8 _ 8 _ 8 _ 8 _ 8 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1600,"res":4,"env":50,"dec":0.16,"acc":0.5,"gate":0.5,"sub":0,"drive":0.05,"level":0.95,"dly":0.15,"vrb":0.12,"tune":0,"root":65,"nt":"0 . 0 3 0 . 5 0 . 7 0 . 8 7 3 0 0 . 0 3 0 . 5 0 . 7 0 . 8 7 3 0 0 . 0 3 0 . 5 0 . 7 0 . 8 7 3 0 0 . 0 3 0 . 5 0 . 7 0 . 8 7 3 0","ac":"1000000010000011100000001000001110000000100000111000000010000011","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.15,"ktune":49,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000001020000000200000102000000020000010200000002000001020000000","clap":"0000200000002000000020000000200000002000000020000000200000002000","chat":"1010101010101010101010101010101010101010101010101010101010101010","cow":"0000000000100000000000000010000000000000001000000000000000100000"}},"poly":{"w1":"sawtooth","w2":"square","det":8,"cutoff":1400,"envA":0,"att":0.02,"rel":0.3,"level":0.16,"dly":0.12,"vrb":0.1,"ch":[["Fm",[53,56,60]],["Cm",[48,51,55]],["Db",[49,53,56]],["Eb",[51,55,58]]],"pp":"1111111111111111222222222222222233333333333333334444444444444444"},"fx":{"dt":"3/16","fb":0.28,"tone":2800,"size":1.8}},
-  {"name":"Sandstorm","tag":"Darude · riff","bpm":136,"swing":0,"phat":0.38,"len":32,"acid":{"wave":"sawtooth","cutoff":640,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.3,"sub":0.4,"drive":0.15,"level":0.48,"dly":0.12,"vrb":0.05,"tune":0,"root":28,"nt":"0 _ 0 _ 0 _ 0 _ 8 _ 8 _ 8 _ 8 _ 3 _ 3 _ 3 _ 3 _ 10 _ 10 _ 10 _ 10 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1900,"res":5,"env":100,"dec":0.1,"acc":0.5,"gate":0.35,"sub":0,"drive":0.15,"level":0.95,"dly":0.16,"vrb":0.15,"tune":0,"root":64,"nt":"7 7 7 7 7 7 7 7 12 12 12 12 10 10 10 10 5 5 7 7 7 7 7 7 7 7 7 7 12 12 10 10","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.1,"ktune":50,"kdec":0.5,"hdec":0.35,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10001000100010001000100010001000","ohat":"00100010001000100010001000100010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":16,"cutoff":2000,"envA":0,"att":0.05,"rel":0.4,"level":0.16,"dly":0.18,"vrb":0.15,"ch":[["Em",[52,55,59,64]],["C",[48,52,55,60]],["G",[50,55,59,62]],["D",[50,54,57,62]]],"pp":"11111111222222223333333344444444"},"fx":{"dt":"3/16","fb":0.32,"tone":3200,"size":2.2}},
-  {"name":"I Feel Love","tag":"Moroder / Summer · bass+lead","bpm":126,"swing":0,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":640,"res":5,"env":60,"dec":0.08,"acc":0.5,"gate":0.32,"sub":0.4,"drive":0.12,"level":0.9,"dly":0.16,"vrb":0.05,"tune":0,"root":33,"nt":"0 12 3 15 5 17 7 19 0 12 3 15 5 17 7 19 0 12 3 15 5 17 7 19 0 12 3 15 5 17 7 19 -4 8 -1 11 1 13 3 15 -4 8 -1 11 1 13 3 15 -2 10 1 13 3 15 5 17 -2 10 1 13 3 15 5 17","ac":"1010101010101010101010101010101010101010101010101010101010101010","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1800,"res":3,"env":50,"dec":0.3,"acc":0.5,"gate":0.92,"sub":0,"drive":0.05,"level":0.5,"dly":0.2,"vrb":0.18,"tune":0,"root":57,"nt":"12 _ _ _ _ _ _ _ 15 _ _ _ _ _ _ _ 19 _ _ _ _ _ _ _ 15 _ _ _ 12 _ _ _ 8 _ _ _ _ _ _ _ 12 _ _ _ _ _ _ _ 10 _ _ _ _ _ _ _ 7 _ _ _ 8 _ _ _","ac":"1000000010000000100000001000000010000000100000001000000010000000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.1,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000200020002000200020002000200020002000200020002000200020002000","clap":"0000200000002000000020000000200000002000000020000000200000002000","chat":"1000100010001000100010001000100010001000100010001000100010001000","ohat":"0010001000100010001000100010001000100010001000100010001000100010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":10,"cutoff":1100,"envA":0,"att":0.4,"rel":1.4,"level":0.16,"dly":0.12,"vrb":0.15,"ch":[["Am",[57,60,64]],["F",[53,57,60]],["G",[55,59,62]],["Am",[57,60,64]]],"pp":"1111111111111111111111111111111122222222222222223333333333333333"},"fx":{"dt":"3/16","fb":0.38,"tone":2800,"size":1.6}},
-  {"name":"Tetris (Korobeiniki)","tag":"trad. · melody","bpm":140,"swing":0,"phat":0.38,"len":128,"acid":{"wave":"sawtooth","cutoff":560,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.34,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.08,"vrb":0.04,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _","ac":"10001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000","sl":"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"square","cutoff":2200,"res":3,"env":30,"dec":0.2,"acc":0.5,"gate":0.5,"sub":0,"drive":0.05,"level":0.95,"dly":0.1,"vrb":0.06,"tune":0,"root":57,"nt":"19 _ _ _ 14 _ 15 _ 17 _ _ _ 15 _ 14 _ 12 _ _ _ 12 _ 15 _ 19 _ _ _ 17 _ 15 _ 14 _ _ _ _ _ 15 _ 17 _ _ _ 19 _ _ _ 15 _ _ _ 12 _ _ _ 12 _ _ _ . . . . . . 17 _ _ _ 20 _ 24 _ _ _ 22 _ 20 _ 19 _ _ _ _ _ 15 _ 19 _ _ _ 17 _ 15 _ 14 _ _ _ 14 _ 15 _ 17 _ _ _ 19 _ _ _ 15 _ _ _ 12 _ _ _ 12 _ _ _ . . . .","ac":"10001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000","sl":"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.12,"ktune":46,"kdec":0.45,"hdec":0.35,"p":{"kick":"20000000200000002000000020000000200000002000000020000000200000002000000020000000200000002000000020000000200000002000000020000000","snare":"00002000000020000000200000002000000020000000200000002000000020000000200000002000000020000000200000002000000020000000200000002000","chat":"10101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010"}},"poly":{"w1":"square","w2":"triangle","det":6,"cutoff":1200,"envA":0,"att":0.01,"rel":0.2,"level":0.16,"dly":0.1,"vrb":0.08,"ch":[["Am",[45,52,57]],["E",[44,52,56]],["Dm",[50,53,57]],["Am",[45,52,57]]],"pp":"11111111111111111111111111111111111111111111111122222222222222223333333333333333111111111111111122222222222222221111111111111111"},"fx":{"dt":"1/16","fb":0.25,"tone":3200,"size":1.4}},
-  {"name":"Hall of the Mountain King","tag":"Grieg · trad.","bpm":112,"swing":0,"phat":0.38,"len":128,"acid":{"wave":"sawtooth","cutoff":520,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.34,"sub":0.5,"drive":0.12,"level":0.48,"dly":0.1,"vrb":0.08,"tune":0,"root":26,"nt":"0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 7 _ _ _ 7 _ _ _ 7 _ _ _ 7 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 12 _ _ _ 12 _ _ _ 12 _ _ _ 12 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _","ac":"10000000000000001000000000000000100000000000000010000000000000001000000000000000100000000000000010000000000000001000000000000000","sl":"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1000,"res":6,"env":120,"dec":0.16,"acc":0.5,"gate":0.86,"sub":0.2,"drive":0.12,"level":0.95,"dly":0.12,"vrb":0.18,"tune":0,"root":50,"nt":"0 . 2 . 3 . 5 . 7 . 3 . 7 . . . 11 . 7 . 11 . 7 . . . . . . . . . 0 . 2 . 3 . 5 . 7 . 3 . 7 . . . 11 . 7 . 11 . 7 . . . . . . . . . 5 . 7 . 8 . 10 . 12 . 8 . 12 . . . 16 . 12 . 16 . 12 . . . . . . . . . 5 . 7 . 8 . 10 . 12 . 8 . 12 . . . 16 . 12 . 16 . 12 . . . . . . . . .","ac":"10000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000010000000","sl":"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.16,"ktune":47,"kdec":0.55,"hdec":0.4,"p":{"kick":"20000000000000002000000000000000200020000000200020002000200020002000200020002000201020102010201020202020202020202020202020202020","chat":"00000000000000000000000000000000000000001000000010001000100010001010101010101010101010101010101011111111111111111111111111111111","ltom":"00000000000000000000000000000010001000100010001000100100011001100110011001100110011011100110111011110110111101101111111111111111"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":8,"cutoff":900,"envA":0,"att":0.2,"rel":1,"level":0.16,"dly":0.14,"vrb":0.16,"ch":[["Dm",[38,45,50]],["A",[45,52,57]],["Gm",[43,50,55]],["Dm",[38,45,50]]],"pp":"11111111111111111111111111111111222222222222222211111111111111113333333333333333333333333333333322222222222222221111111111111111"},"fx":{"dt":"3/8","fb":0.32,"tone":2200,"size":2.4}},
-  {"name":"Enola Gay","tag":"OMD · riff","bpm":132,"swing":0,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":620,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.32,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.12,"vrb":0.05,"tune":0,"root":29,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ -3 _ -3 _ -3 _ -3 _ -3 _ -3 _ -3 _ -3 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":2000,"res":13,"env":120,"dec":0.14,"acc":0.5,"gate":0.45,"sub":0.1,"drive":0.15,"level":0.95,"dly":0.16,"vrb":0.12,"tune":0,"root":62,"nt":"3 2 3 3 2 3 0 3 2 3 0 5 2 3 0 . 3 2 3 3 2 3 0 3 2 3 0 5 2 3 0 . 3 2 3 3 2 3 0 3 2 3 0 5 2 3 0 . 3 2 3 3 2 3 0 3 2 3 0 5 2 3 0 .","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.14,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000200020002000200020002000200020002000200020002000200020002000","snare":"0000200000002000000020000000200000002000000020000000200000002000","chat":"1010101010101010101010101010101010101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":10,"cutoff":1600,"envA":0,"att":0.02,"rel":0.3,"level":0.16,"dly":0.12,"vrb":0.14,"ch":[["F",[53,57,60]],["D",[50,54,57]],["Bb",[46,50,53]],["C",[48,52,55]]],"pp":"1111111111111111222222222222222233333333333333334444444444444444"},"fx":{"dt":"3/16","fb":0.3,"tone":3000,"size":1.8}},
-  {"name":"Just Can't Get Enough","tag":"Depeche Mode · riff","bpm":125,"swing":0,"phat":0.38,"len":32,"acid":{"wave":"sawtooth","cutoff":640,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.32,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.12,"vrb":0.05,"tune":0,"root":31,"nt":"0 _ 0 _ 0 _ 0 _ 5 _ 5 _ 5 _ 5 _ 9 _ 9 _ 9 _ 9 _ 7 _ 7 _ 7 _ 7 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":2100,"res":4,"env":50,"dec":0.12,"acc":0.5,"gate":0.35,"sub":0,"drive":0.05,"level":0.95,"dly":0.15,"vrb":0.1,"tune":0,"root":55,"nt":"0 . 0 . 0 2 4 . 0 . 0 2 4 . 7 . 5 . 4 . 2 . 0 . 0 . 0 2 4 . 0 .","ac":"10001010100010101000101010001010","sl":"00000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.12,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"20000010200000002000001020000000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010"}},"poly":{"w1":"square","w2":"sawtooth","det":8,"cutoff":1600,"envA":0,"att":0.01,"rel":0.2,"level":0.16,"dly":0.1,"vrb":0.1,"ch":[["G",[55,59,62]],["C",[48,52,55]],["Em",[52,55,59]],["D",[50,54,57]]],"pp":"11111111222222223333333344444444"},"fx":{"dt":"1/8","fb":0.3,"tone":3200,"size":1.4}},
-  {"name":"Cars","tag":"Gary Numan · riff","bpm":118,"swing":0,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":560,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.55,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.14,"vrb":0.08,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _ -4 _ -4 _ -4 _ -4 _ -4 _ -4 _ -4 _ -4 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1400,"res":6,"env":40,"dec":0.3,"acc":0.5,"gate":0.95,"sub":0,"drive":0.05,"level":0.95,"dly":0.2,"vrb":0.18,"tune":0,"root":57,"nt":"0 _ _ _ 0 _ _ _ -2 _ _ _ 0 _ _ _ -5 _ _ _ -5 _ _ _ -2 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ -2 _ _ _ 0 _ _ _ -5 _ _ _ -5 _ _ _ -2 _ _ _ 0 _ _ _","ac":"1000000010000000100000001000000010000000100000001000000010000000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.14,"ktune":47,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000000020000000200000002000000020000000200000002000000020000000","snare":"0000200000002000000020000000200000002000000020000000200000002000","chat":"1010101010101010101010101010101010101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"square","det":9,"cutoff":1300,"envA":0,"att":0.1,"rel":0.5,"level":0.16,"dly":0.12,"vrb":0.16,"ch":[["Am",[57,60,64]],["G",[55,59,62]],["F",[53,57,60]],["Am",[57,60,64]]],"pp":"1111111111111111222222222222222233333333333333334444444444444444"},"fx":{"dt":"3/16","fb":0.3,"tone":2600,"size":2.2}},
-  {"name":"Tainted Love","tag":"Soft Cell · bass+lead","bpm":144,"swing":0,"phat":0.38,"len":32,"acid":{"wave":"sawtooth","cutoff":660,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.28,"sub":0.4,"drive":0.12,"level":0.9,"dly":0.1,"vrb":0.05,"tune":0,"root":36,"nt":"0 . 0 . 7 . 0 . 3 . 0 . 10 . 0 . 0 . 0 . 7 . 0 . 3 . 10 . 0 . 3 .","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"square","cutoff":2400,"res":3,"env":50,"dec":0.08,"acc":0.5,"gate":0.3,"sub":0,"drive":0.05,"level":0.5,"dly":0.14,"vrb":0.1,"tune":0,"root":60,"nt":"0 . . . 3 . . . 0 . . . 3 . . . 0 . . . 3 . . . 7 . 3 . 0 . . .","ac":"10101010101010101010101010101010","sl":"00000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.12,"ktune":47,"kdec":0.48,"hdec":0.38,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010","cow":"00100010001000100010001000100010"}},"poly":{"w1":"square","w2":"sawtooth","det":7,"cutoff":1400,"envA":0,"att":0.01,"rel":0.2,"level":0.16,"dly":0.1,"vrb":0.08,"ch":[["Cm",[48,51,55]],["Ab",[44,48,51]],["Eb",[51,55,58]],["Bb",[46,50,53]]],"pp":"11111111111111113333333333333333"},"fx":{"dt":"1/8","fb":0.26,"tone":2800,"size":1.6}},
-  {"name":"Don't You Want Me","tag":"The Human League · riff","bpm":118,"swing":0,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":620,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.34,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.12,"vrb":0.06,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ -4 _ -4 _ -4 _ -4 _ -4 _ -4 _ -4 _ -4 _ 3 _ 3 _ 3 _ 3 _ 3 _ 3 _ 3 _ 3 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1800,"res":5,"env":50,"dec":0.14,"acc":0.5,"gate":0.5,"sub":0.1,"drive":0.1,"level":0.95,"dly":0.16,"vrb":0.12,"tune":0,"root":57,"nt":"12 . 7 . 12 . 7 . 15 . 12 . 7 . 5 . 12 . 7 . 12 . 14 . 12 . 7 . 5 . 3 . 12 . 7 . 12 . 7 . 15 . 12 . 7 . 5 . 12 . 7 . 12 . 14 . 12 . 7 . 5 . 3 .","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.14,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000000020000000200000002000000020000000200000002000000020000000","snare":"0000200000002000000020000000200000002000000020000000200000002000","chat":"1010101010101010101010101010101010101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":9,"cutoff":1500,"envA":0,"att":0.02,"rel":0.3,"level":0.16,"dly":0.12,"vrb":0.14,"ch":[["Am",[57,60,64]],["F",[53,57,60]],["C",[48,52,55]],["G",[55,59,62]]],"pp":"1111111111111111222222222222222233333333333333334444444444444444"},"fx":{"dt":"3/16","fb":0.3,"tone":3000,"size":1.8}},
-  {"name":"Don't Go","tag":"Yazoo · bass+lead","bpm":132,"swing":0,"phat":0.38,"len":32,"acid":{"wave":"sawtooth","cutoff":740,"res":6,"env":60,"dec":0.12,"acc":0.5,"gate":0.3,"sub":0.5,"drive":0.18,"level":0.9,"dly":0.16,"vrb":0.05,"tune":0,"root":41,"nt":"0 . 0 12 0 . 3 . 0 7 0 . 5 . 0 . 0 . 0 12 0 . 3 . 7 . 5 . 3 . 0 .","ac":"10001010100010001000101010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"square","cutoff":2000,"res":4,"env":50,"dec":0.12,"acc":0.5,"gate":0.45,"sub":0,"drive":0.05,"level":0.5,"dly":0.15,"vrb":0.12,"tune":0,"root":65,"nt":"12 . . . 15 . 12 . 8 . . . 12 . . . 12 . . . 15 . 17 . 15 . 12 . 8 . . .","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.12,"ktune":49,"kdec":0.5,"hdec":0.36,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010","ohat":"00100010001000100010001000100010"}},"poly":{"w1":"sawtooth","w2":"square","det":10,"cutoff":1400,"envA":0,"att":0.02,"rel":0.25,"level":0.16,"dly":0.12,"vrb":0.1,"ch":[["Fm",[53,56,60]],["Db",[49,53,56]],["Eb",[51,55,58]],["Cm",[48,51,55]]],"pp":"11111111111111112222222222222222"},"fx":{"dt":"1/16","fb":0.3,"tone":2800,"size":1.6}}
+  {"name":"Take On Me","tag":"a-ha · riff","by":"a-ha","year":"1985","bpm":85,"swing":0,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":520,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.4,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.14,"vrb":0.06,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"square","cutoff":2200,"res":3,"env":50,"dec":0.2,"acc":0.5,"gate":0.4,"sub":0,"drive":0.05,"level":0.95,"dly":0.16,"vrb":0.12,"tune":0,"root":66,"nt":"12 12 8 5 . 5 . 10 . 10 . 10 14 14 15 17 15 15 10 7 . 7 . 8 . 8 . 8 . . . . 12 12 8 5 . 5 . 10 . 10 . 10 14 14 15 17 15 15 10 7 . 7 . 8 . 8 . 8 . . . .","ac":"1000000000001010100000000000000010000000000010101000000000000000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.14,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000000020000000200000002000000020000000200000002000000020000000","snare":"0000200000002000000020000000200000002000000020000000200000002000","chat":"1010101010101010101010101010101010101010101010101010101010101010"}},"poly":{"w1":"square","w2":"sawtooth","det":8,"cutoff":1500,"envA":0,"att":0.02,"rel":0.4,"level":0.16,"dly":0.12,"vrb":0.16,"ch":[["A",[57,61,64]],["D",[50,54,57]],["E",[52,56,59]],["F#m",[54,57,61]]],"pp":"1111111111111111222222222222222233333333333333331111111111111111"},"fx":{"dt":"1/8","fb":0.28,"tone":3200,"size":1.6}},
+  {"name":"Popcorn","tag":"Hot Butter · riff","by":"Hot Butter","year":"1972","bpm":130,"swing":0,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":520,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.32,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.1,"vrb":0.04,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"square","cutoff":1900,"res":3,"env":50,"dec":0.1,"acc":0.5,"gate":0.28,"sub":0,"drive":0.05,"level":0.95,"dly":0.14,"vrb":0.06,"tune":0,"root":57,"nt":"12 . 10 . 12 . 7 . 3 . 7 . 0 . . . 12 . 10 . 12 . 7 . 3 . 7 . 0 . . . 12 . 14 . 15 . 14 . 15 . 12 . 14 . 12 . 14 . 10 . 12 . 10 . 12 . 8 . 12 . . .","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.14,"ktune":47,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000200020002000200020002000200020002000200020002000200020002000","clap":"0000200000002000000020000000200000002000000020000000200000002000","chat":"0010001000100010001000100010001000100010001000100010001000100010"}},"poly":{"w1":"square","w2":"square","det":6,"cutoff":1300,"envA":0,"att":0.01,"rel":0.25,"level":0.16,"dly":0.1,"vrb":0.08,"ch":[["Am",[57,60,64]],["Dm",[50,53,57]],["Em",[52,55,59]],["Am",[57,60,64]]],"pp":"1111111111111111222222222222222233333333333333334444444444444444"},"fx":{"dt":"1/16","fb":0.25,"tone":3200,"size":1.4}},
+  {"name":"Axel F","tag":"Beverly Hills Cop · riff","by":"Harold Faltermeyer","year":"1984","bpm":118,"swing":0.06,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":560,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.32,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.12,"vrb":0.05,"tune":0,"root":29,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 8 _ 8 _ 8 _ 8 _ 8 _ 8 _ 8 _ 8 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1600,"res":4,"env":50,"dec":0.16,"acc":0.5,"gate":0.5,"sub":0,"drive":0.05,"level":0.95,"dly":0.15,"vrb":0.12,"tune":0,"root":65,"nt":"0 . . 3 _ . 0 . 0 5 . 0 . -2 . . 0 . . 7 _ . 0 . 0 8 . 7 . 3 . . 0 . . 7 _ . 12 . 0 -2 . -2 . 7 . . 2 . 0 _ _ _ _ _ _ _ . . . . . .","ac":"1001000001000100100100000100010010010010000001001010000000000000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.15,"ktune":49,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000001020000000200000102000000020000010200000002000001020000000","clap":"0000200000002000000020000000200000002000000020000000200000002000","chat":"1010101010101010101010101010101010101010101010101010101010101010","cow":"0000000000100000000000000010000000000000001000000000000000100000"}},"poly":{"w1":"sawtooth","w2":"square","det":8,"cutoff":1400,"envA":0,"att":0.02,"rel":0.3,"level":0.16,"dly":0.12,"vrb":0.1,"ch":[["Fm",[53,56,60]],["Cm",[48,51,55]],["Db",[49,53,56]],["Eb",[51,55,58]]],"pp":"1111111111111111222222222222222233333333333333334444444444444444"},"fx":{"dt":"3/16","fb":0.28,"tone":2800,"size":1.8}},
+  {"name":"Sandstorm","tag":"Darude · riff","by":"Darude","year":"1999","bpm":136,"swing":0,"phat":0.38,"len":32,"acid":{"wave":"sawtooth","cutoff":640,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.3,"sub":0.4,"drive":0.15,"level":0.48,"dly":0.12,"vrb":0.05,"tune":0,"root":28,"nt":"0 _ 0 _ 0 _ 0 _ 8 _ 8 _ 8 _ 8 _ 3 _ 3 _ 3 _ 3 _ 10 _ 10 _ 10 _ 10 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1900,"res":5,"env":100,"dec":0.1,"acc":0.5,"gate":0.35,"sub":0,"drive":0.15,"level":0.95,"dly":0.16,"vrb":0.15,"tune":0,"root":64,"nt":"7 7 7 7 7 _ 7 7 7 7 7 _ 7 7 7 7 12 12 12 12 12 12 12 10 10 10 10 10 10 10 5 5","ac":"10000010000010001000000100000010","sl":"00000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.1,"ktune":50,"kdec":0.5,"hdec":0.35,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10001000100010001000100010001000","ohat":"00100010001000100010001000100010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":16,"cutoff":2000,"envA":0,"att":0.05,"rel":0.4,"level":0.16,"dly":0.18,"vrb":0.15,"ch":[["Em",[52,55,59,64]],["C",[48,52,55,60]],["G",[50,55,59,62]],["D",[50,54,57,62]]],"pp":"11111111222222223333333344444444"},"fx":{"dt":"3/16","fb":0.32,"tone":3200,"size":2.2}},
+  {"name":"I Feel Love","tag":"Moroder / Summer · bass+lead","by":"Donna Summer / Giorgio Moroder","year":"1977","bpm":126,"swing":0,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":640,"res":5,"env":60,"dec":0.08,"acc":0.5,"gate":0.32,"sub":0.4,"drive":0.12,"level":0.9,"dly":0.16,"vrb":0.05,"tune":0,"root":33,"nt":"0 12 0 12 0 12 0 12 0 12 0 12 0 12 0 12 0 12 0 12 0 12 0 12 0 12 0 12 0 12 0 12 -4 8 -4 8 -4 8 -4 8 -4 8 -4 8 -4 8 -4 8 -2 10 -2 10 -2 10 -2 10 -2 10 -2 10 -2 10 -2 10","ac":"1010101010101010101010101010101010101010101010101010101010101010","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1800,"res":3,"env":50,"dec":0.3,"acc":0.5,"gate":0.92,"sub":0,"drive":0.05,"level":0.5,"dly":0.2,"vrb":0.18,"tune":0,"root":57,"nt":"12 _ _ _ _ _ _ _ 15 _ _ _ _ _ _ _ 19 _ _ _ _ _ _ _ 15 _ _ _ 12 _ _ _ 8 _ _ _ _ _ _ _ 12 _ _ _ _ _ _ _ 10 _ _ _ _ _ _ _ 7 _ _ _ 8 _ _ _","ac":"1000000010000000100000001000000010000000100000001000000010000000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.1,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000200020002000200020002000200020002000200020002000200020002000","clap":"0000200000002000000020000000200000002000000020000000200000002000","chat":"1000100010001000100010001000100010001000100010001000100010001000","ohat":"0010001000100010001000100010001000100010001000100010001000100010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":10,"cutoff":1100,"envA":0,"att":0.4,"rel":1.4,"level":0.16,"dly":0.12,"vrb":0.15,"ch":[["Am",[57,60,64]],["F",[53,57,60]],["G",[55,59,62]],["Am",[57,60,64]]],"pp":"1111111111111111111111111111111122222222222222223333333333333333"},"fx":{"dt":"3/16","fb":0.38,"tone":2800,"size":1.6}},
+  {"name":"Tetris (Korobeiniki)","tag":"trad. · melody","by":"Russian trad.","year":"1861","bpm":140,"swing":0,"phat":0.38,"len":128,"acid":{"wave":"sawtooth","cutoff":560,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.34,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.08,"vrb":0.04,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _","ac":"10001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000","sl":"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"square","cutoff":2200,"res":3,"env":30,"dec":0.2,"acc":0.5,"gate":0.5,"sub":0,"drive":0.05,"level":0.95,"dly":0.1,"vrb":0.06,"tune":0,"root":57,"nt":"19 _ _ _ 14 _ 15 _ 17 _ _ _ 15 _ 14 _ 12 _ _ _ 12 _ 15 _ 19 _ _ _ 17 _ 15 _ 14 _ _ _ _ _ 15 _ 17 _ _ _ 19 _ _ _ 15 _ _ _ 12 _ _ _ 12 _ _ _ . . . . . . 17 _ _ _ 20 _ 24 _ _ _ 22 _ 20 _ 19 _ _ _ _ _ 15 _ 19 _ _ _ 17 _ 15 _ 14 _ _ _ 14 _ 15 _ 17 _ _ _ 19 _ _ _ 15 _ _ _ 12 _ _ _ 12 _ _ _ . . . .","ac":"10001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000","sl":"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.12,"ktune":46,"kdec":0.45,"hdec":0.35,"p":{"kick":"20000000200000002000000020000000200000002000000020000000200000002000000020000000200000002000000020000000200000002000000020000000","snare":"00002000000020000000200000002000000020000000200000002000000020000000200000002000000020000000200000002000000020000000200000002000","chat":"10101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010"}},"poly":{"w1":"square","w2":"triangle","det":6,"cutoff":1200,"envA":0,"att":0.01,"rel":0.2,"level":0.16,"dly":0.1,"vrb":0.08,"ch":[["Am",[45,52,57]],["E",[44,52,56]],["Dm",[50,53,57]],["Am",[45,52,57]]],"pp":"11111111111111111111111111111111111111111111111122222222222222223333333333333333111111111111111122222222222222221111111111111111"},"fx":{"dt":"1/16","fb":0.25,"tone":3200,"size":1.4}},
+  {"name":"Hall of the Mountain King","tag":"Grieg · trad.","by":"Edvard Grieg","year":"1875","bpm":112,"swing":0,"phat":0.38,"len":128,"acid":{"wave":"sawtooth","cutoff":520,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.34,"sub":0.5,"drive":0.12,"level":0.48,"dly":0.1,"vrb":0.08,"tune":0,"root":26,"nt":"0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 7 _ _ _ 7 _ _ _ 7 _ _ _ 7 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 0 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 12 _ _ _ 12 _ _ _ 12 _ _ _ 12 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _ 5 _ _ _","ac":"10000000000000001000000000000000100000000000000010000000000000001000000000000000100000000000000010000000000000001000000000000000","sl":"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1000,"res":6,"env":120,"dec":0.16,"acc":0.5,"gate":0.6,"sub":0.2,"drive":0.12,"level":0.95,"dly":0.12,"vrb":0.18,"tune":0,"root":50,"nt":"0 _ 2 _ 3 _ 5 _ 7 _ 3 _ 7 _ _ _ 8 _ 5 _ 8 _ _ _ 7 _ 3 _ 7 _ _ _ 0 _ 2 _ 3 _ 5 _ 7 _ 3 _ 7 _ _ _ 8 _ 5 _ 8 _ _ _ 7 _ 3 _ 7 _ _ _ 7 _ 9 _ 10 _ 12 _ 14 _ 10 _ 14 _ _ _ 15 _ 12 _ 15 _ _ _ 14 _ 11 _ 14 _ _ _ 7 _ 9 _ 10 _ 12 _ 14 _ 10 _ 14 _ _ _ 15 _ 12 _ 15 _ _ _ 14 _ 11 _ 14 _ _ _","ac":"10000000100000001000100010000000100000001000000010001000100000001000000010000000100010001000000010000000100000001000100010000000","sl":"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.16,"ktune":47,"kdec":0.55,"hdec":0.4,"p":{"kick":"20000000000000002000000000000000200020000000200020002000200020002000200020002000201020102010201020202020202020202020202020202020","chat":"00000000000000000000000000000000000000001000000010001000100010001010101010101010101010101010101011111111111111111111111111111111","ltom":"00000000000000000000000000000010001000100010001000100100011001100110011001100110011011100110111011110110111101101111111111111111"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":8,"cutoff":900,"envA":0,"att":0.2,"rel":1,"level":0.16,"dly":0.14,"vrb":0.16,"ch":[["Dm",[38,45,50]],["A",[45,52,57]],["Gm",[43,50,55]],["Dm",[38,45,50]]],"pp":"11111111111111111111111111111111222222222222222211111111111111113333333333333333333333333333333322222222222222221111111111111111"},"fx":{"dt":"3/8","fb":0.32,"tone":2200,"size":2.4}},
+  {"name":"Enola Gay","tag":"OMD · riff","by":"OMD","year":"1980","bpm":132,"swing":0,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":620,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.32,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.12,"vrb":0.05,"tune":0,"root":29,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ -3 _ -3 _ -3 _ -3 _ -3 _ -3 _ -3 _ -3 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 5 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _ 7 _","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":2000,"res":13,"env":120,"dec":0.14,"acc":0.5,"gate":0.45,"sub":0.1,"drive":0.15,"level":0.95,"dly":0.16,"vrb":0.12,"tune":0,"root":62,"nt":"3 _ 2 _ 3 _ 3 _ 2 _ 3 _ 0 _ 3 _ 2 _ 3 _ 0 _ 5 _ 2 _ 3 _ 0 _ . . 3 _ 2 _ 3 _ 3 _ 2 _ 3 _ 0 _ 3 _ 2 _ 3 _ 0 _ 5 _ 2 _ 3 _ 0 _ . .","ac":"1000000000000000000000001000000010000000000000000000000010000000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.14,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000200020002000200020002000200020002000200020002000200020002000","snare":"0000200000002000000020000000200000002000000020000000200000002000","chat":"1010101010101010101010101010101010101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":10,"cutoff":1600,"envA":0,"att":0.02,"rel":0.3,"level":0.16,"dly":0.12,"vrb":0.14,"ch":[["F",[53,57,60]],["D",[50,54,57]],["Bb",[46,50,53]],["C",[48,52,55]]],"pp":"1111111111111111222222222222222233333333333333334444444444444444"},"fx":{"dt":"3/16","fb":0.3,"tone":3000,"size":1.8}},
+  {"name":"Just Can't Get Enough","tag":"Depeche Mode · riff","by":"Depeche Mode","year":"1981","bpm":125,"swing":0,"phat":0.38,"len":32,"acid":{"wave":"sawtooth","cutoff":640,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.32,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.12,"vrb":0.05,"tune":0,"root":31,"nt":"0 _ 0 _ 0 _ 0 _ 5 _ 5 _ 5 _ 5 _ 9 _ 9 _ 9 _ 9 _ 7 _ 7 _ 7 _ 7 _","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":2100,"res":4,"env":50,"dec":0.12,"acc":0.5,"gate":0.35,"sub":0,"drive":0.05,"level":0.95,"dly":0.15,"vrb":0.1,"tune":0,"root":55,"nt":"0 . 0 . 0 . 0 . 0 . 0 . 2 . 4 . 5 _ . . 4 _ . . 2 _ . . 4 _ . .","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.12,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"20000010200000002000001020000000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010"}},"poly":{"w1":"square","w2":"sawtooth","det":8,"cutoff":1600,"envA":0,"att":0.01,"rel":0.2,"level":0.16,"dly":0.1,"vrb":0.1,"ch":[["G",[55,59,62]],["C",[48,52,55]],["Em",[52,55,59]],["D",[50,54,57]]],"pp":"11111111222222223333333344444444"},"fx":{"dt":"1/8","fb":0.3,"tone":3200,"size":1.4}},
+  {"name":"Cars","tag":"Gary Numan · riff","by":"Gary Numan","year":"1979","bpm":118,"swing":0,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":560,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.55,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.14,"vrb":0.08,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _ -4 _ -4 _ -4 _ -4 _ -4 _ -4 _ -4 _ -4 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1400,"res":6,"env":40,"dec":0.3,"acc":0.5,"gate":0.95,"sub":0,"drive":0.05,"level":0.95,"dly":0.2,"vrb":0.18,"tune":0,"root":57,"nt":"0 _ _ _ 0 _ _ _ -2 _ 0 _ _ _ _ _ -5 _ _ _ -5 _ _ _ -2 _ 0 _ _ _ _ _ 0 _ _ _ 0 _ _ _ -2 _ 0 _ _ _ _ _ -5 _ _ _ -5 _ _ _ -2 _ 0 _ _ _ _ _","ac":"1000000010100000100000001010000010000000101000001000000010100000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.14,"ktune":47,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000000020000000200000002000000020000000200000002000000020000000","snare":"0000200000002000000020000000200000002000000020000000200000002000","chat":"1010101010101010101010101010101010101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"square","det":9,"cutoff":1300,"envA":0,"att":0.1,"rel":0.5,"level":0.16,"dly":0.12,"vrb":0.16,"ch":[["Am",[57,60,64]],["G",[55,59,62]],["F",[53,57,60]],["Am",[57,60,64]]],"pp":"1111111111111111222222222222222233333333333333334444444444444444"},"fx":{"dt":"3/16","fb":0.3,"tone":2600,"size":2.2}},
+  {"name":"Tainted Love","tag":"Soft Cell · bass+lead","by":"Soft Cell","year":"1981","bpm":144,"swing":0,"phat":0.38,"len":32,"acid":{"wave":"sawtooth","cutoff":660,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.28,"sub":0.4,"drive":0.12,"level":0.9,"dly":0.1,"vrb":0.05,"tune":0,"root":36,"nt":"0 . 0 . 7 . 0 . 3 . 0 . 10 . 0 . 0 . 0 . 7 . 0 . 3 . 10 . 0 . 3 .","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"lead":{"wave":"square","cutoff":2400,"res":3,"env":50,"dec":0.08,"acc":0.5,"gate":0.3,"sub":0,"drive":0.05,"level":0.5,"dly":0.14,"vrb":0.1,"tune":0,"root":60,"nt":"0 . . . 3 . . . 0 . . . 3 . . . 0 . . . 3 . . . 7 . 3 . 0 . . .","ac":"10101010101010101010101010101010","sl":"00000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.12,"ktune":47,"kdec":0.48,"hdec":0.38,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010","cow":"00100010001000100010001000100010"}},"poly":{"w1":"square","w2":"sawtooth","det":7,"cutoff":1400,"envA":0,"att":0.01,"rel":0.2,"level":0.16,"dly":0.1,"vrb":0.08,"ch":[["Cm",[48,51,55]],["Ab",[44,48,51]],["Eb",[51,55,58]],["Bb",[46,50,53]]],"pp":"11111111111111113333333333333333"},"fx":{"dt":"1/8","fb":0.26,"tone":2800,"size":1.6}},
+  {"name":"Don't You Want Me","tag":"The Human League · riff","by":"The Human League","year":"1981","bpm":118,"swing":0,"phat":0.38,"len":64,"acid":{"wave":"sawtooth","cutoff":620,"res":5,"env":60,"dec":0.12,"acc":0.5,"gate":0.34,"sub":0.4,"drive":0.12,"level":0.48,"dly":0.12,"vrb":0.06,"tune":0,"root":33,"nt":"0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ 0 _ -4 _ -4 _ -4 _ -4 _ -4 _ -4 _ -4 _ -4 _ 3 _ 3 _ 3 _ 3 _ 3 _ 3 _ 3 _ 3 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _ -2 _","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"lead":{"wave":"sawtooth","cutoff":1800,"res":5,"env":50,"dec":0.14,"acc":0.5,"gate":0.5,"sub":0.1,"drive":0.1,"level":0.95,"dly":0.16,"vrb":0.12,"tune":0,"root":57,"nt":"12 . 7 . 12 . 7 . 15 . 12 . 7 . 5 . 12 . 7 . 12 . 14 . 12 . 7 . 5 . 3 . 12 . 7 . 12 . 7 . 15 . 12 . 7 . 5 . 12 . 7 . 12 . 14 . 12 . 7 . 5 . 3 .","ac":"1000100010001000100010001000100010001000100010001000100010001000","sl":"0000000000000000000000000000000000000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.14,"ktune":48,"kdec":0.5,"hdec":0.4,"p":{"kick":"2000000020000000200000002000000020000000200000002000000020000000","snare":"0000200000002000000020000000200000002000000020000000200000002000","chat":"1010101010101010101010101010101010101010101010101010101010101010"}},"poly":{"w1":"sawtooth","w2":"sawtooth","det":9,"cutoff":1500,"envA":0,"att":0.02,"rel":0.3,"level":0.16,"dly":0.12,"vrb":0.14,"ch":[["Am",[57,60,64]],["F",[53,57,60]],["C",[48,52,55]],["G",[55,59,62]]],"pp":"1111111111111111222222222222222233333333333333334444444444444444"},"fx":{"dt":"3/16","fb":0.3,"tone":3000,"size":1.8}},
+  {"name":"Don't Go","tag":"Yazoo · bass+lead","by":"Yazoo","year":"1982","bpm":132,"swing":0,"phat":0.38,"len":32,"acid":{"wave":"sawtooth","cutoff":740,"res":6,"env":60,"dec":0.12,"acc":0.5,"gate":0.3,"sub":0.5,"drive":0.18,"level":0.9,"dly":0.16,"vrb":0.05,"tune":0,"root":41,"nt":"3 . 3 . 8 . 8 . 7 . 7 . 5 . 3 5 8 . 8 . 7 . 7 . 5 . 12 . 12 . 5 3","ac":"10001000100010001000100010101000","sl":"00000000000000010000000000000001"},"lead":{"wave":"square","cutoff":2000,"res":4,"env":50,"dec":0.12,"acc":0.5,"gate":0.45,"sub":0,"drive":0.05,"level":0.5,"dly":0.15,"vrb":0.12,"tune":0,"root":65,"nt":"12 . . . 15 . 12 . 8 . . . 12 . . . 12 . . . 15 . 17 . 15 . 12 . 8 . . .","ac":"10001000100010001000100010001000","sl":"00000000000000000000000000000000"},"drums":{"level":0.6,"vrb":0.12,"ktune":49,"kdec":0.5,"hdec":0.36,"p":{"kick":"20002000200020002000200020002000","clap":"00002000000020000000200000002000","chat":"10101010101010101010101010101010","ohat":"00100010001000100010001000100010"}},"poly":{"w1":"sawtooth","w2":"square","det":10,"cutoff":1400,"envA":0,"att":0.02,"rel":0.25,"level":0.16,"dly":0.12,"vrb":0.1,"ch":[["Fm",[53,56,60]],["Db",[49,53,56]],["Eb",[51,55,58]],["Cm",[48,51,55]]],"pp":"11111111111111112222222222222222"},"fx":{"dt":"1/16","fb":0.3,"tone":2800,"size":1.6}}
 ];
 
 /* apply a preset object to state (audio-independent) */
@@ -612,6 +692,7 @@ function loadMIDI(buf, fname){
   state.bpm=bpm; state.len=len; state.acid.root=bassRoot; state.lead.root=leadRoot;
   state.pats.A=pat; state.pats.B=deep(pat); state.slot='A'; state.chain=false;
   refreshAll();
+  renderNowPlaying((fname||'MIDI file').replace(/\.midi?$/i,''), 'MIDI import', '');
   const btn=$('midiBtn'); btn.textContent='♪ '+(fname||'MIDI').replace(/\.midi?$/i,'').slice(0,14);
   setTimeout(()=>{ btn.innerHTML='&#9834; MIDI'; }, 4000);
 }
@@ -931,6 +1012,15 @@ function renderTransport(){
   $('dtSel').value = state.fx.dt;
 }
 
+function renderNowPlaying(title, by, year){
+  const t = $('npTrack'), c = $('npCredit'), np = $('nowPlaying');
+  if (!t) return;
+  t.textContent = title || '—';
+  c.innerHTML = by ? '<b>'+by+'</b>' + (year ? ' · '+year : '') : '';
+  np.classList.remove('flash'); void np.offsetWidth;   // restart the flash animation
+  np.classList.add('flash');
+}
+
 function refreshAll(){
   Object.values(KNOBS).forEach(k => k.set(getPath(k.def.path)));
   renderAcid(); renderLead(); renderDrums(); renderPoly(); renderTransport();
@@ -945,6 +1035,8 @@ function applyPreset(i){
   loadPreset(PRESETS[presetIx]);
   $('presetSel').value = String(presetIx);
   refreshAll();
+  const p = PRESETS[presetIx];
+  renderNowPlaying(p.name, p.by, p.year);
 }
 function wireTransport(){
   const sel = $('presetSel');
@@ -1042,6 +1134,7 @@ function randomize(){
   state.acid.dec    = 0.08 + Math.random()*0.3;
   state.acid.drive  = 0.1 + Math.random()*0.6;
   refreshAll();
+  renderNowPlaying('Random Groove', 'Phatty', '');
   const b=$('randBtn'); b.classList.add('on'); setTimeout(()=>b.classList.remove('on'),250);
 }
 
@@ -1625,6 +1718,7 @@ function startPlay(){
   schedulerTick();
   $('playBtn').classList.add('playing');
   $('playBtn').innerHTML = '&#9632;';
+  document.body.classList.add('playing');
 }
 function stopPlay(){
   playing = false;
@@ -1644,6 +1738,7 @@ function stopPlay(){
   setPlayhead(-1);
   $('playBtn').classList.remove('playing');
   $('playBtn').innerHTML = '&#9654;';
+  document.body.classList.remove('playing');
 }
 function togglePlay(){
   if (!AC){ powerOn(true); return; }

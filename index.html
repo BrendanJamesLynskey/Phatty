@@ -17,7 +17,7 @@
             --amber-dark: #6a4a1a;
             --gold: #c89b3c;
             --gold-glow: #f0c060;
-            --acid: #b6f24a;
+            --acid: #ff9d3c;
             --drum: #45d9d0;
             --poly: #b48cf0;
             --deep: #0a0a12;
@@ -61,8 +61,8 @@
         .accent-border-top {
             position: fixed;
             top: 0; left: 0; right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--amber-bright), transparent);
+            height: 3px;
+            background: linear-gradient(90deg, #ff9d3c 0 25%, #7cd0ff 25% 50%, #45d9d0 50% 75%, #b48cf0 75% 100%);
             box-shadow: 0 0 15px rgba(232, 168, 56, 0.3);
             z-index: 3;
         }
@@ -84,11 +84,19 @@
 
         h1 {
             font-size: clamp(2.2rem, 7vw, 3.6rem);
-            font-weight: 200;
-            letter-spacing: 0.28em;
-            margin-bottom: 0.6rem;
-            color: var(--text-primary);
-            text-indent: 0.28em;
+            font-weight: 600;
+            letter-spacing: 0.24em;
+            margin-bottom: 0.7rem;
+            color: var(--amber-bright);
+            text-indent: 0.24em;
+            text-shadow: 0 0 28px rgba(232, 168, 56, 0.4);
+        }
+        .h1-stripe {
+            height: 4px;
+            width: min(320px, 70%);
+            margin: 0 auto 1rem;
+            border-radius: 2px;
+            background: linear-gradient(90deg, #ff9d3c 0 25%, #7cd0ff 25% 50%, #45d9d0 50% 75%, #b48cf0 75% 100%);
         }
 
         .subtitle {
@@ -136,10 +144,21 @@
             background: rgba(255,255,255,0.03);
             color: var(--text-dim);
         }
-        .chip.acid { color: var(--acid); border-color: rgba(182,242,74,0.28); }
+        .chip.acid { color: var(--acid); border-color: rgba(255,157,60,0.3); }
         .chip.drum { color: var(--drum); border-color: rgba(69,217,208,0.28); }
         .chip.poly { color: var(--poly); border-color: rgba(180,140,240,0.28); }
         .chip.fx   { color: var(--gold-glow); border-color: rgba(232,168,56,0.3); }
+
+        .classics-label { font-size: 0.6rem; letter-spacing: 0.3em; color: var(--amber-bright); opacity: 0.7; margin-bottom: 0.4rem; }
+        .classics {
+            font-size: 0.78rem;
+            font-weight: 300;
+            letter-spacing: 0.06em;
+            line-height: 1.8;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
 
         .buttons { display: flex; flex-direction: column; gap: 1rem; align-items: center; }
 
@@ -169,7 +188,19 @@
             box-shadow: 0 6px 34px rgba(232, 168, 56, 0.24);
             transform: translateY(-1px);
         }
-        a.btn .play { color: var(--amber-bright); font-size: 0.9em; }
+        a.btn .play {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: var(--amber-bright);
+            color: #100c04;
+            font-size: 0.8em;
+            box-shadow: 0 0 18px rgba(232, 168, 56, 0.55);
+        }
 
         .device-note {
             font-size: 0.68rem;
@@ -207,8 +238,8 @@
     <div class="accent-border-top"></div>
 
     <div class="container">
-        <div class="glyph">&#9835;</div>
         <h1>PHATTY</h1>
+        <div class="h1-stripe"></div>
         <p class="subtitle">ACID<span class="sep">&#183;</span>DRUMS<span class="sep">&#183;</span>POLY<span class="sep">&#183;</span>FX</p>
 
         <div class="ornament-line">
@@ -231,9 +262,12 @@
             <span class="chip drum">Drum Machine</span>
             <span class="chip poly">Poly Synth</span>
             <span class="chip fx">Delay · Reverb · Drive</span>
-            <span class="chip">16+ Presets</span>
+            <span class="chip">13 Presets</span>
             <span class="chip">Randomize</span>
         </div>
+
+        <p class="classics-label">PRESETS PLAY THE CLASSICS</p>
+        <p class="classics">Take On Me · Axel F · I Feel Love · Sandstorm · Tainted Love · Cars · Popcorn &amp; more</p>
 
         <div class="buttons">
             <a href="app.html" class="btn" id="launch"><span class="play">&#9654;</span> LAUNCH PHATTY</a>
